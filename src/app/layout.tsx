@@ -1,8 +1,9 @@
+import ReactQueryProvider from '@/providers/ReactQueryProvider'
+import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-import './globals.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import { ThemeProvider } from '@mui/material/styles';
+import {TextField, CssBaseline} from '@mui/material'
+import JotaiProvider from '@/providers/JotaiProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -16,7 +17,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body>
+        <JotaiProvider>
+        <AppRouterCacheProvider>
+          <CssBaseline/>
+        <ReactQueryProvider>
+          {children}
+        </ReactQueryProvider>
+        </AppRouterCacheProvider>
+        </JotaiProvider>
+        </body>
     </html>
   )
 }
