@@ -1,28 +1,33 @@
 import { FormControl, InputLabel, MenuItem, Select, SelectChangeEvent } from '@mui/material';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { Controller, useFormContext } from 'react-hook-form';
 
-const SimpleSelect = ({register, options, label}:{
-    register: any,
+const SimpleSelect = ({options, label}:{
     options: any[], label: string
 }) => {
-  
 
-    // const handleChange = (event: SelectChangeEvent) => {
-    //   onChange(event.target.value as string);
-    //   };
-    
+    const  { control } = useFormContext()
+
     return (
-        <FormControl {...register} fullWidth size="small">
-        <Select
-          // value={value}
-        //   label={label}
-          // onChange={handleChange}
-
-        >
-          {options.map((opt, index) => (
-            <MenuItem key={index} value={opt.value}>{opt.label}</MenuItem>
-          ))}
-        </Select>
+        <FormControl fullWidth size="small">
+          <Controller
+            control={control}
+            name={label}
+            // rules={{ required: "Recipe picture is required" }}
+            render={({ field: { value, onChange, ...field } }) => {
+              return (
+                <Select
+                  value={value}
+                  onChange={(event)=> onChange(event.target.value)}
+                >
+                  {options.map((opt, index) => (
+                    <MenuItem key={index} value={opt.value}>{opt.label}</MenuItem>
+                  ))}
+                </Select>
+                )
+            }
+          }
+          />
       </FormControl>
     )
 }

@@ -6,7 +6,7 @@ const Category = ({ category }:{category: any}) => {
 
     const methods = useFormContext()
     const {setValue, getValues, watch} = methods
-    const {categories} = watch()
+    const categories = watch('categories') ?? []
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // setChecked(event.target.checked);
@@ -18,6 +18,7 @@ const Category = ({ category }:{category: any}) => {
             setValue('categories', categories_copy.filter(cat => cat != category.id))
         }
     };
+
 
     return (
         <Box ml={2}>

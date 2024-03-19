@@ -20,7 +20,7 @@ const MenuProps = {
 };
 
 
-function getStyles(name: any, selectedItems: readonly string[], theme: Theme) {
+function getStyles(name, selectedItems, theme) {
   return {
     fontWeight:
       selectedItems.indexOf(name) === -1
@@ -29,16 +29,20 @@ function getStyles(name: any, selectedItems: readonly string[], theme: Theme) {
   };
 }
 
-export default function MultipleSelectChip({selectedItems, setSelectedItems, items, itemKey, itemValue, itemLable, label}:{
-  selectedItems: string[],
-  setSelectedItems: any,
-  items : any[],
-  itemKey: string, itemValue: string, itemLable: string, label: string
-}) {
+export default function MultipleSelectChip({selectedItems, setSelectedItems, items, itemKey, itemValue, itemLable, label}
+//   :{
+//   selectedItems: string[],
+//   setSelectedItems: any,
+//   items : any[],
+//   itemKey: string, itemValue: string, itemLable: string, label: string
+// }
+) {
   const theme = useTheme();
 
 
-  const handleChange = (event: SelectChangeEvent<typeof selectedItems>) => {
+  const handleChange = (event
+    // : SelectChangeEvent<typeof selectedItems>
+    ) => {
     const {
       target: { value },
     } = event;

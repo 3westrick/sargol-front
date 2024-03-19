@@ -1,4 +1,4 @@
-import authConfig from "./lib/auth.config"
+import authConfig from "./lib/auth.config.js"
 import NextAuth from "next-auth"
 
 
@@ -18,7 +18,8 @@ export default auth(async (req) => {
   const {nextUrl} = req
   const isLoggedIn = !!req.auth
   
-  const isAdmin = req.auth?.user.role
+  const isAdmin = req.auth?.user?.role
+  
   const isAdminRoute = nextUrl.pathname.startsWith(adminPrefic);
   
   if (isAdminRoute && !isAdmin){

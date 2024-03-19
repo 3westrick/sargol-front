@@ -1,6 +1,6 @@
 import Credentials from "next-auth/providers/credentials"
 
-import type { NextAuthConfig } from "next-auth"
+// import type { NextAuthConfig } from "next-auth"
 import axios from "axios"
 import { jwtDecode } from "jwt-decode"
 import dayjs from "dayjs"
@@ -46,7 +46,7 @@ export default {
 
             return session
         },
-        async jwt({ token, user, account, profile, isNewUser }) {
+        async jwt({ token, user }) {
             if (user){
                 token.user = user
             }
@@ -80,5 +80,7 @@ export default {
             return token
         }
     },
-    jwt: { secret: process.env.JWT_SECRET, },
-} satisfies NextAuthConfig
+    jwt: { secret: process.env.JWT_SECRET},
+    trustHost: true,
+}
+// satisfies NextAuthConfig

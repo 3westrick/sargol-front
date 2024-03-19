@@ -25,9 +25,9 @@ const RichTextEditor = ({ value, onChange }: {
     value: any, onChange: any
 }) => {
 
-    const [editor, setEditor] = useState(null);
+    const [editor, setEditor] = useState<any>(null);
 
-    const handleImageUpload = async (file) => {
+    const handleImageUpload = async (file: any) => {
       try {
         const response = await uploadImage(file);
         const range = editor.getSelection(true);

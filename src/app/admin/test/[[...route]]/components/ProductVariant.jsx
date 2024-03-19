@@ -1,29 +1,33 @@
-import { admin_product_attributes, admin_product_attributes_variant, admin_product_attributes_visible, admin_product_values, admin_product_variants } from '@/Atoms'
-import { Accordion, AccordionDetails, AccordionSummary, Box, Button, Divider, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material'
-import { useAtom, useAtomValue } from 'jotai'
+import { AccordionDetails, AccordionSummary, Box, Button, FormControl, InputLabel, MenuItem, Select, Stack, Typography } from '@mui/material'
 import React from 'react'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MyAccordion from '@/components/admin/MyAccordion';
 import VariantCreate from './VariantCreate';
+import { useFormContext, useFieldArray } from 'react-hook-form';
 
 const ProductVariant = () => {
-  const [variants, setVariants] = useAtom(admin_product_variants)
-  const attributes = useAtomValue(admin_product_attributes)
-  const values = useAtomValue(admin_product_values)
-  const attributes_variant = useAtomValue(admin_product_attributes_variant)
-  // const attributes_visible = useAtomValue(admin_product_attributes_visible)
 
-  const att_value_variant = structuredClone(attributes).filter(att => {
+  const methods = useFormContext()
+  const { watch, setValue, control} = methods
+  const {
+    selectedValues: values,
+    variantAttributes: attributes_variant, 
+    attributes,
+} = watch()
+
+  const {fields: variants, append} = useFieldArray({
+    name: 'variants',
+    control: control
+  })
+
+
+  const att_value_variant = structuredClone(attributes).filter((att) => {
     if (attributes_variant[att.id]){
       att.values = values[att.id]
       return att
     }
   })
-  // console.log(att_value_variant)
-  // console.log(attributes)
-  // console.log(attributes_variant)
-  // console.log(attributes_visible)
-  // console.log(values)
+  
 
   function new_variant(){
     const obj = {}
@@ -32,32 +36,38 @@ const ProductVariant = () => {
     })
     return {
       key_id: Date.now(),
+      sku: '',
       attributes: obj,
       regular_price: 0,
       sale_price: 0,
-      tax_status: '',
-      tax_class: '',
-      description: '',
-      sku: '',
-      mpn: '',
-      stock: 'in_stock',
-      quantity: 0,
-
+  
+      stock: 0,
+  
       weight: '',
+      length: '',
       width: '',
       height: '',
-      length: '',
+      shipping_class: 'no_shipping_class',
+  
+      tax_class: 'none',
 
-      shipping_class: '',
+      image: null,
+      gallery: [],
+  
+      description: '',
+      mpn: '',
 
     }
   }
 
   function add_variant(){
     // variants.push(new_variant())
-    const arr = [...variants]
-    arr.push(new_variant())
-    setVariants(arr)
+
+    append(new_variant())
+    // const arr = [...variants]
+    // arr.push(new_variant())
+    // console.log(arr)
+    // setValue('variants',arr)
     // setVariants(prev => prev.push(new_variant()))
   }
 
@@ -67,7 +77,7 @@ const ProductVariant = () => {
     const variant_index = arr.indexOf(vari)
     arr[variant_index].attributes[att_id] = value
 
-    setVariants(arr)
+    setValue('variants',arr)
     // vari.attributes[att_id] = value
   }
 
@@ -84,7 +94,7 @@ const ProductVariant = () => {
 
   function removeVariant(variant_id){
     const arr = variants.filter(variant => variant.key_id != variant_id)
-    setVariants(arr)
+    setValue('variants',arr)
   }
 
   return (
@@ -133,21 +143,12 @@ const ProductVariant = () => {
           </Stack>
         </AccordionSummary>
         <AccordionDetails>
-          <VariantCreate variant={variant}/>
+          <VariantCreate index={index}/>
         </AccordionDetails>
       </MyAccordion>
 
       })}
       </Box>
-
-      {/* <Box mt={3}>
-        <Button type='button' variant='contained' sx={{textTransform: 'unset'}} onClick={() => console.log(att_value_variant)}>
-          Save changes
-        </Button>
-        <Button type='button' variant='contained' sx={{textTransform: 'unset', ml: 2}} onClick={() => console.log(variants)}>
-          Cancel
-        </Button>
-      </Box> */}
       
     </Box>
   )

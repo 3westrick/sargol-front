@@ -5,10 +5,9 @@ import AttributeForm from './AttributeForm'
 import { useAtom } from 'jotai'
 import { admin_drawer_attribue } from '@/Atoms'
 
-const AttributeDrawer = () => {
-  const [attribute, setAsttirbute] = useAtom(admin_drawer_attribue)
+const AttributeDrawer = ({open, setOpen} : {open: boolean, setOpen: any}) => {
   return (
-    <TemporaryDrawer state={attribute != null} setState={setAsttirbute}>
+    <TemporaryDrawer state={open} setState={setOpen}>
       <AttributeForm/>
     </TemporaryDrawer>
   )

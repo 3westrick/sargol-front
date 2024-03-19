@@ -1,6 +1,5 @@
 import NextAuth from "next-auth"
 import authConfig from "@/lib/auth.config"
-
 export const {
   handlers: { GET, POST },
   auth,
@@ -10,5 +9,7 @@ export const {
   session: {
     strategy: 'jwt'
   },
+  trustHost: true,
   ...authConfig
 })
+

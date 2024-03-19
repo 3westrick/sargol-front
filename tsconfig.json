@@ -22,6 +22,6 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/lib/auth.config.s", "src/lib/auth.config.js", "src/lib/auth.js", "src/middleware.js", "src/lib/auth.js", "src/lib/auth.config.js", "src/lib/auth.config.js", "src/components/editor/RichTextEditor.jsx", "src/components/admin/UploadInput.jsx", "src/components/admin/MyAccordion.jsx", "src/components/admin/MultipleSelectChip.jsx", "src/components/admin/MultipleSelectChip.jsx", "src/components/admin/CustomAccorion.jsx", "src/app/admin/products/create/ProductVariant.jsx", "src/app/admin/products/create/ProductAttribute.jsx", "src/api/admin/products/productAPI.jsx", "src/app/admin/test/[[...route]]/components/ProductEdit.tsx"],
   "exclude": ["node_modules"]
 }

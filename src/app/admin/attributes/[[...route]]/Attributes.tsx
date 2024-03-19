@@ -32,13 +32,14 @@ const Attributes = () => {
     // useHydrateAtoms([[admin_drawer_attribue, null] as const ])
     const setAtomAttribute = useSetAtom(admin_drawer_attribue)
 
+    const [open, setOpen] = useState(false)
+
 
     const attributes = useQuery({
         queryKey: ['admin-attributes'],
         queryFn: () => getAttributes()
     })
 
-    console.log(attributes)
 
     const columns: GridColDef[] = useMemo(()=> [
         {field: 'id', headerName: 'Id', width:90},
@@ -56,7 +57,7 @@ const Attributes = () => {
                         Configure Values
                     </Button>
                     -
-                    <Button sx={{textTransform: 'none'}} onClick={() => setAtomAttribute(params.row)}>
+                    <Button sx={{textTransform: 'none'}} onClick={() => {setAtomAttribute(params.row); setOpen(true)}}>
                         Edit
                     </Button>
                 </>
@@ -81,11 +82,16 @@ const Attributes = () => {
             <Typography variant="h4">
                 Attributes
             </Typography>
-            <Button onClick={() => setAtomAttribute({
-                title: '',
-                slug: '',
-                type: 'normal',
-            })} startIcon={<EditIcon/>} size='small' variant='contained' sx={{textTransform: 'none', bgcolor: 'common.black', borderRadius: 8, '&:hover':{ bgcolor: 'grey.900'} }}>
+            <Button onClick={() => {
+                setAtomAttribute({
+                    title: '',
+                    slug: '',
+                    type: 'normal',
+                });
+                setOpen(true)
+            }
+            
+            } startIcon={<EditIcon/>} size='small' variant='contained' sx={{textTransform: 'none', bgcolor: 'common.black', borderRadius: 8, '&:hover':{ bgcolor: 'grey.900'} }}>
                 Create
             </Button>
         </Box>
@@ -100,7 +106,7 @@ const Attributes = () => {
           }} 
           sx={{ '--DataGrid-overlayHeight': '300px' }}
         />
-        <AttributeDrawer/>
+        <AttributeDrawer open={open} setOpen={setOpen}/>
     </div>
   )
 }

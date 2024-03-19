@@ -1,8 +1,8 @@
 import {atom} from 'jotai'
 
-export const admin_drawer_attribue = atom(null)
-export const admin_drawer_value = atom(null)
-export const admin_drawer_category = atom(null)
+export const admin_drawer_attribue = atom<any>(null)
+export const admin_drawer_value = atom<any>(null)
+export const admin_drawer_category = atom<any>(null)
 
 export const admin_snackbar = atom({
     state: false,
@@ -30,11 +30,11 @@ export const admin_product_height= atom('')
 export const admin_product_length= atom('')
 export const admin_product_shipping_class= atom('no_shipping_class')
 
-export const admin_product_attributes = atom([])
-export const admin_product_attributes_visible = atom({})
-export const admin_product_attributes_variant = atom({})
-export const admin_product_values = atom({})
-export const admin_product_variants = atom([])
+export const admin_product_attributes = atom<any>([])
+export const admin_product_attributes_visible = atom<any>({})
+export const admin_product_attributes_variant = atom<any>({})
+export const admin_product_values = atom<any>({})
+export const admin_product_variants = atom<any>([])
 
 export const admin_product_initial_data = {
     regular_price: 0,

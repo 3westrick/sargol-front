@@ -5,35 +5,33 @@ import SimpleSelect from '@/components/admin/SimpleSelect'
 import { Box, Divider, TextField } from '@mui/material'
 import { useAtom } from 'jotai'
 import React from 'react'
+import { useFormContext } from 'react-hook-form'
 
 const ProductShipping = () => {
-    const [weight, setWeight] = useAtom(admin_product_weight)
-    const [height, setHeight] = useAtom(admin_product_height)
-    const [width, setWidth] = useAtom(admin_product_width)
-    const [length, setLength] = useAtom(admin_product_length)
-    const [shipclass, setShipclass] = useAtom(admin_product_shipping_class)
+
+    const {register} = useFormContext()
 
     return (
         <Box>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Weight (kg)'>
-                    <TextField fullWidth type='number' size='small' value={weight} onChange={(e)=> setWeight(e.target.value)}/>
+                    <TextField fullWidth type='number' size='small' {...register('weight')}/>
                 </MyFormControl>
             </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Dimensions (cm)'>
                     <Box width={'100%'} display={'flex'}>
-                        <TextField sx={{width:90}} label="Length" type='number' size='small' value={length} onChange={(e)=> setLength(e.target.value)}/>
-                        <TextField sx={{width:90}} label="Width" type='number' size='small' value={width} onChange={(e)=> setWidth(e.target.value)}/>
-                        <TextField sx={{width:90}} label="Height" type='number' size='small' value={height} onChange={(e)=> setHeight(e.target.value)}/>
+                        <TextField sx={{width:90}} label="Length" type='number' size='small' {...register('length')}/>
+                        <TextField sx={{width:90}} label="Width" type='number' size='small' {...register('width')}/>
+                        <TextField sx={{width:90}} label="Height" type='number' size='small' {...register('height')}/>
                     </Box>
                 </MyFormControl>
             </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Shipping Class'>
-                    <ShippingClassSelect label='shipping_class' />
+                    <ShippingClassSelect label='shipping_class'/>
                 </MyFormControl>
             </Box>
 

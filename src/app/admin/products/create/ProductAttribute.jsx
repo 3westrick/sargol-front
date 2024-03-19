@@ -10,6 +10,7 @@ import CustomeCheckboxAutoComplete from '@/components/admin/CustomeCheckboxAutoC
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { useFormContext } from 'react-hook-form'
 
 const ProductAttribute = () => {
     const attributes = useQuery({
@@ -17,25 +18,33 @@ const ProductAttribute = () => {
         queryFn: () => getAttributes()
     })
 
-
-    // console.log(new_attributes)
-    
-    const [selectedAttributes, setSelectedAttributes] = useAtom(admin_product_attributes)
-    const [selectedValues, setSelectedValues] = useAtom(admin_product_values)
-    const [visibleAttributes, setVisibleAttributes] = useAtom(admin_product_attributes_visible)
-    const [variantAttributes, setVariantAttributes] = useAtom(admin_product_attributes_variant)
+    const methods = useFormContext()
+    const {register, watch, setValue} = methods
     
 
+    const {
+        selectedValues,
+        visibleAttributes, 
+        variantAttributes, 
+        attributes: selectedAttributes
+    } = watch()
+    
     const change_attributes = (data) => {
         const new_values = {}
         const new_visible = {}
         const new_variant = {}
 
         data.sort(function(a,b) {
-            return a.id - b.id;
+            if ( a.id < b.id ){
+                return -1;
+              }
+              if ( a.id > b.id ){
+                return 1;
+              }
+              return 0;
         });
 
-        data.map(item => {
+        data.map((item) => {
             if (!selectedValues[item.id]){
                 // console.log(111)
                 new_values[item.id] = []
@@ -58,29 +67,28 @@ const ProductAttribute = () => {
             }
 
         })
-        setSelectedValues(new_values)
-        setVisibleAttributes(new_visible)
-        setVariantAttributes(new_variant)
-        setSelectedAttributes(data)
+        setValue('selectedValues' ,new_values)
+        setValue('visibleAttributes' ,new_visible)
+        setValue('variantAttributes' ,new_variant)
+        setValue('attributes', data)
     }
-
 
     const change_values = (data, attribute) => {
         const obj = {}
         obj[attribute.id] = data
-        setSelectedValues(prev => ({...prev, ...obj}))
+        setValue('selectedValues',{...selectedValues, ...obj})
     }
 
     const change_check_visible = (e, attribute) => {
         const obj = {}
         obj[attribute.id] = e.target.checked
-        setVisibleAttributes(prev => ({...prev, ...obj}))
+        setValue('visibleAttributes' ,{...visibleAttributes, ...obj})
     }
 
     const change_check_variant= (e, attribute) => {
         const obj = {}
         obj[attribute.id] = e.target.checked
-        setVariantAttributes(prev => ({...prev, ...obj}))
+        setValue('variantAttributes', {...variantAttributes, ...obj})
     }
 
 
@@ -90,14 +98,14 @@ const ProductAttribute = () => {
             <Box>
                 <CustomeCheckboxAutoComplete 
                     items={attributes.data}
+                    // items={attributes.data.map(item => ({...item, visible: false, variable: false}))}
                     label={'Attributes'}
+                    l={'attributes'}
                     itemKey='id'
                     itemValue='id'
                     itemLable='title'
-                    // selectedItems={selectedAttributes} 
-                    // setSelectedItems={(data) => change_attributes(data)}
+                    onChange={change_attributes}
                     value={selectedAttributes}
-                    setValue={(data) => change_attributes(data)}
                     />
             </Box>
 
@@ -109,21 +117,20 @@ const ProductAttribute = () => {
                             <FormGroup>
                                <FormControlLabel onChange={(e) => change_check_visible(e, selected_attribute)} control={<Checkbox checked={visibleAttributes[selected_attribute.id]}/>} label="Visible on the product page" />
                                <FormControlLabel onChange={(e) => change_check_variant(e, selected_attribute)} control={<Checkbox checked={variantAttributes[selected_attribute.id]}/>}label="Used for varitations" />
-                           </FormGroup>
-                           <Box mt={2}>
-                           <CustomeCheckboxAutoComplete
-                           items={selected_attribute.values}
-                           label={selected_attribute.title + "'s values"}
-                           itemKey='id'
-                           itemValue='id'
-                           itemLable='title'
-                           // selectedItems={selectedValues[selected_attribute.id] ?? []} 
-                           // setSelectedItems={(data) => change_values(data, selected_attribute)}
-                           value={selectedValues[selected_attribute.id] ?? []}
-                           setValue={(data) => change_values(data, selected_attribute)}
-                           />
-                           </Box>
-                       </CustomAccorion>  
+                            </FormGroup>
+                            <Box mt={2}>
+                            <CustomeCheckboxAutoComplete
+                                items={selected_attribute.values}
+                                label={selected_attribute.title + "'s values"}
+                                itemKey='id'
+                                itemValue='id'
+                                itemLable='title'
+                                l={`selectedValues.${selected_attribute.id}`}
+                                onChange={(data) => change_values(data, selected_attribute)}
+                                value={selectedValues[selected_attribute.id] ?? []}
+                            />
+                            </Box>
+                        </CustomAccorion>  
                         )
                     })}
                 </Box>

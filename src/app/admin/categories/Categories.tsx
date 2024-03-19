@@ -8,7 +8,7 @@ import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from "@mui/x-
 import { useQuery } from "@tanstack/react-query"
 import { useSetAtom } from "jotai"
 import { useRouter } from "next/navigation"
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import EditIcon from '@mui/icons-material/Edit';
 import CategoryDrawer from "./CategoryDrawer"
 
@@ -21,12 +21,13 @@ type CategoryProp = {
 }
 
 const Categories = () => {
-    const router = useRouter()
+    
     const setAtomCategory = useSetAtom(admin_drawer_category)
     const categories = useQuery({
         queryKey: ['admin-categories'],
         queryFn: () => getCategories()
     })
+    const [open, setOpen] = useState(false)
 
     const columns: GridColDef[] = useMemo(()=> [
         {field: 'id', headerName: 'Id', width:90},
@@ -39,7 +40,7 @@ const Categories = () => {
             type: 'actions',
             flex: 1,
             renderCell: (params: GridRenderCellParams<any>) => (
-                <Button sx={{textTransform: 'none'}} onClick={() => setAtomCategory({...params.row})}>
+                <Button sx={{textTransform: 'none'}} onClick={() => {setAtomCategory({...params.row}); setOpen(true)}}>
                     Edit
                 </Button>
             ),
@@ -63,11 +64,13 @@ const Categories = () => {
             <Typography variant="h4">
                 Categories
             </Typography>
-            <Button onClick={() => setAtomCategory({
+            <Button onClick={() => {setAtomCategory({
                 title: '',
                 slug: '',
                 parent: '',
-            })} startIcon={<EditIcon/>} variant='contained' sx={{textTransform: 'none', bgcolor: 'common.black', borderRadius: 8, '&:hover':{ bgcolor: 'grey.900'} }}>
+            });
+            setOpen(true)
+            }} startIcon={<EditIcon/>} variant='contained' sx={{textTransform: 'none', bgcolor: 'common.black', borderRadius: 8, '&:hover':{ bgcolor: 'grey.900'} }}>
                 Create
             </Button>
         </Box>
@@ -85,7 +88,7 @@ const Categories = () => {
             }}
 
         />
-        <CategoryDrawer/>
+        <CategoryDrawer open={open} setOpen={setOpen}/>
         </div>
     )
 }

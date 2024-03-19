@@ -5,36 +5,41 @@ import SimpleRadio from '@/components/admin/SimpleRadio'
 import { Box, Checkbox, FormControl, FormControlLabel, FormGroup, InputLabel, TextField, Typography } from '@mui/material'
 import { useAtom } from 'jotai'
 import React, { useState } from 'react'
+import { useFormContext, Controller } from 'react-hook-form'
 
 const ProductInventory = () => {
-    const [sku, setSku] = useAtom(admin_product_SKU)
-    const [mpn, setMpn] = useAtom(admin_product_MPN)
-    const [stock, setStock] = useAtom(admin_product_stock)
-    const [quantity, setQuantity] = useAtom(admin_product_quantity)
-    const [unit, setUnit] = useAtom(admin_product_unit)
 
-    console.log("Inventory")
+    const {register, control} = useFormContext()
 
     return (
         <Box>
             <Box display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='SKU'>
-                    <TextField fullWidth size='small' value={sku} onChange={(e)=> setSku(e.target.value)}/>
+                    <TextField fullWidth size='small' {...register('sku')}/>
                 </MyFormControl>
             </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='MPN'>
-                    <TextField fullWidth size='small' value={mpn} onChange={(e)=> setMpn(e.target.value)}/>
+                    <TextField fullWidth size='small' {...register('mpn')} />
                 </MyFormControl>
             </Box>
 
             <Box mt={3}>
                 <Box display={'flex'} alignItems={'center'}>
                 <InputLabel sx={{width: 200}}>Stock management</InputLabel>
-                <FormControlLabel
-                    control={<Checkbox/>}
-                    label={'Track stock quantity for this product'}
+                <Controller
+                name='stock_management'
+                control={control}
+                // rules={}
+                render={({ field: { value, onChange, ...field } }) =>{
+                    return (
+                    <FormControlLabel
+                        control={<Checkbox checked={value} onChange={(event, data) => onChange(data)}/>}
+                        label={'Track stock quantity for this product'}
+                    />
+                    )
+                }}
                 />
                 </Box>
             </Box>
@@ -44,10 +49,17 @@ const ProductInventory = () => {
             {/* Limit purchases to 1 item per order */}
 
             <Box mt={3} display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
-                <MyFormControl label='Stock status'>
+                <Controller
+                control={control}
+                name={'stock_status'}
+                // rules={{ required: "Recipe picture is required" }}
+                render={({ field: { value, onChange, ...field } }) => {
+                    return <MyFormControl label='Stock status'>
                     <SimpleRadio 
-                        value={stock}
-                        setValue={setStock}
+                        value={value}
+                        onChange={(event: any, data: string) => {
+                            onChange(data)
+                        }}
                         options={[
                             {value: 'in_stock', label: 'in stock'},
                             {value: 'out_of_stock', label: 'out of stock'},
@@ -56,28 +68,39 @@ const ProductInventory = () => {
                         label={null}
                     />
                 </MyFormControl>
+                }}
+                />
             </Box>
 
 
             <Box mt={3}>
                 <Box display={'flex'} alignItems={'center'}>
                 <InputLabel sx={{width: 200}}>Sold individually</InputLabel>
-                <FormControlLabel
-                    control={<Checkbox/>}
-                    label={'Limit purchases to 1 item per order'}
+                <Controller
+                name='sold_individually'
+                control={control}
+                // rules={}
+                render={({ field: { value, onChange, ...field } }) =>{
+                    return (
+                    <FormControlLabel
+                        control={<Checkbox checked={value} onChange={(event, data) => onChange(data)}/>}
+                        label={'Limit purchases to 1 item per order'}
+                    />
+                    )
+                }}
                 />
                 </Box>
             </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Initial number in stock'>
-                    <TextField fullWidth size='small' value={quantity} onChange={(e)=> setQuantity(e.target.value)}/>
+                    <TextField fullWidth size='small' {...register('stock')}/>
                 </MyFormControl>
             </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Unit of measurement'>
-                    <TextField fullWidth size='small' value={unit} onChange={(e)=> setUnit(e.target.value)}/>
+                    <TextField fullWidth size='small' {...register('unit')}/>
                 </MyFormControl>
             </Box>
 

@@ -15,10 +15,10 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-export default function UploadInput({multiple, onChange}: {onChange: any, multiple: boolean}) {
+export default function UploadInputWithChange({onChange}: {onChange: any}) {
 
   
   return (
-    <VisuallyHiddenInput multiple={multiple}onChange={onChange} type="file" />
+    <VisuallyHiddenInput onChange={onChange} type="file" />
   );
 }

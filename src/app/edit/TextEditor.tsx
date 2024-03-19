@@ -4,6 +4,7 @@ import Quill from 'quill';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // import styles
 import { Button } from '@mui/material';
+import { useFormContext, Controller } from 'react-hook-form';
 
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -28,15 +29,17 @@ const toolbarOptions = [
     ['clean']                                         // remove formatting button
 ];
 
-const TextEditor = ({value, setValue}: {
-    value: string,
-    setValue: React.Dispatch<React.SetStateAction<string>>
+const TextEditor = ({value, onChange}: {
+    value: string, onChange: any
 }) => {
+
+    const methods = useFormContext()
+    const {setValue, getValues,control } = methods
 
     return (
         <ReactQuill theme="snow" modules={
             {toolbar: toolbarOptions}
-        } value={value} onChange={setValue} />
+        } value={value} onChange={onChange} />
     )
 }
 

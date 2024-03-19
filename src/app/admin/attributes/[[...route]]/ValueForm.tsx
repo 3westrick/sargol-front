@@ -7,22 +7,48 @@ import { Box, Button, FormHelperText, Stack, TextField } from '@mui/material'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createValue, updateValue } from '@/api/admin/attributes/attributeAPI'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import UploadInput from '@/components/admin/UploadInput'
+import UploadInputWithChange from '@/components/admin/UploadInputWithChange'
+import { Controller, useForm } from 'react-hook-form'
+
 // import { updateAttribute } from '@/app/admin/attributes/actions'
+type FormValue = {
+    id: number | undefined,
+    title: string,
+    slug: string,
+    color: string,
+    attribute: number | undefined,
+    image: any
+
+}
 
 const ValueForm = () => {
     // useHydrateAtoms([[admin_drawer_attribue, attribute] as const ])
     const [value, setValue] = useAtom(admin_drawer_value)
     const setSnackbar = useSetAtom(admin_snackbar)
-    console.log(value?.color)
+    
+    const {register, control, handleSubmit, watch} = useForm<FormValue>({
+        defaultValues:{
+            id: value.id,
+            title: value.title,
+            slug: value.slug,
+            color: value.color,
+            image: value.image,
+            attribute: value.attribute
+        }
+    })
+
+    const image = watch('image')
+    
 
     const queryClient = useQueryClient()
     const valueMutation = useMutation({
-        mutationFn: (data) => value.id ?  updateValue(data): createValue(data),
+        mutationFn: (data: any) => value.id ?  updateValue(data): createValue(data),
         onSuccess: (res) => {
-            queryClient.invalidateQueries(['admin-attributes'])
-            if (value.id) 
-                queryClient.invalidateQueries(['admin-attributes', value.id])
+            queryClient.invalidateQueries({queryKey: ['admin-attributes']})
+            
+            if (value.id) {
+                queryClient.invalidateQueries({queryKey:['admin-attributes', value.id]})
+            }
             setSnackbar({
                 state: true,
                 message: value.id ?  "Value Updated" : "Value Created"
@@ -34,61 +60,67 @@ const ValueForm = () => {
         throw new Error(valueMutation.error.message)
     }
     
-    const handleClick = () => {
+    const handleClick = (data: FormValue | any) => {
         // console.log(value)
-        const data = new FormData()
+        const form_data = new FormData()
 
-        for ( let key in value ) {
-            if (key == 'image' && typeof typeof value[key] == "string"){
+        for ( let key in data ) {
+            if (key == 'image' && (typeof data[key] == 'string' || data[key] == null)){
                 continue
             }
                 
-            data.append(key, value[key]);
+            form_data.append(key, data[key]);
         }
-        
-
-        valueMutation.mutate(data)        
+        console.log(form_data)
+        valueMutation.mutate(form_data)
+                
     }
 
-    const uploadImages = (e) => {
-        // const files = Array.from(e.target.files).filter(f => extentions.includes(f.type));
-        setValue({...value, image: e.target.files[0]})
-      }
-    
 
     return (
         <Box p={4} alignItems={'unset'}>
-            <form action={handleClick}>
+            <form onSubmit={handleSubmit(handleClick)}>
             <Stack>
                 <Box>
-                    <TextField fullWidth helperText={'Title for the value (shown on the front-end).'} label={'Title'} size='small' value={value?.title ?? ""} onChange={(e) => setValue({...value, title: e.target.value }) } />
+                    <TextField fullWidth helperText={'Title for the value (shown on the front-end).'} label={'Title'} size='small' 
+                    {...register('title')} />
                 </Box>
                 <Box mt={4}>
-                    <TextField fullWidth helperText={"Unique slug for the value; must be no more than 28 characters."} label={'Slug'} size='small' value={value?.slug ?? ""} onChange={(e) => setValue({...value, slug: e.target.value }) } />
+                    <TextField fullWidth helperText={"Unique slug for the value; must be no more than 28 characters."} label={'Slug'} size='small' 
+                    {...register('slug')} />
                 </Box>
 
                 <Box mt={3}>
                     <FormHelperText sx={{ml: 0}}>Image swatch</FormHelperText>
                     <Box display={'flex'} alignItems={'center'} mt={1}>
-                        <Button
-                            component="label"
-                            role={undefined}
-                            variant="outlined"
-                            sx={{textTransform: 'unset'}}
-                            tabIndex={-1}
-                            color='inherit'
-                            startIcon={<CloudUploadIcon />}
-                            >
-                            Upload
-                            <UploadInput uploadImages={uploadImages} />
-                        </Button>
-                        {value?.image && <Box ml={1} component={'img'} height={35} width={'auto'} 
-                        src={ typeof value?.image == 'string' ? value?.image : URL.createObjectURL(value?.image)}/>}
+                        <Controller
+                        control={control}
+                        name='image'
+                        // rules={}
+                        render={({ field: { value, onChange, ...field } }) => {
+                            return (
+                                <Button
+                                    component="label"
+                                    role={undefined}
+                                    variant="outlined"
+                                    sx={{textTransform: 'unset'}}
+                                    tabIndex={-1}
+                                    color='inherit'
+                                    startIcon={<CloudUploadIcon />}
+                                    >
+                                    Upload
+                                    <UploadInputWithChange onChange={(event: any) => onChange(event.target.files[0]) } />
+                                </Button>
+                            )
+                        }}
+                        />
+                        {image && <Box ml={1} component={'img'} height={35} width={'auto'} 
+                        src={ typeof image == 'string' ? image : URL.createObjectURL(image)}/>}
                     </Box>
                 </Box>
 
                 {value?.type == 'color' && <Box mt={3}>
-                    <input value={value?.color} onChange={(e) => setValue({...value, color: e.target.value})} type='color'/>
+                    <input {...register('color')} type='color'/>
                 </Box>
                 }
 

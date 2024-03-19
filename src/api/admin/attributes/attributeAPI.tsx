@@ -74,7 +74,7 @@ export async function updateAttribute(attribute:any) {
 }
 
 
-export async function createValue(data:FormData) {
+export async function createValue(data:FormData | any) {
     const session = await auth()
     return await AxiosAdmin.post(`values/create/`,data,{
         headers: {
@@ -87,14 +87,18 @@ export async function createValue(data:FormData) {
     })
 }
 
-export async function updateValue(data:FormData) {
+export async function updateValue(data:FormData| any) {
+    // console.log(data)
+    // return null
     const session = await auth()
+    
     return await AxiosAdmin.put(`values/edit/${data.get('id')}/`,data,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`,
         }
     }).then(response => response.data)
     .catch(error => {
+        console.log(error.response)
         throw error
     })
 }

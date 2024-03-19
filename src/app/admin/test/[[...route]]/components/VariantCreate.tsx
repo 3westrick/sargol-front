@@ -1,26 +1,20 @@
-import { admin_product_variants } from '@/Atoms'
 import MyFormControl from '@/components/admin/MyFormControl'
 import ShippingClassSelect from '@/components/admin/ShippingClassSelect'
-import SimpleRadio from '@/components/admin/SimpleRadio'
-import SimpleSelect from '@/components/admin/SimpleSelect'
 import TaxClassSelect from '@/components/admin/TaxClassSelect'
-import { Box, FormControl, MenuItem, Select, TextField, Typography } from '@mui/material'
-import { useAtom } from 'jotai'
+import { Button, Typography } from '@mui/material'
+import Box from '@mui/material/Box'
+import TextField from '@mui/material/TextField'
 import React from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
+import EditIcon from '@mui/icons-material/Edit';
+import UploadInput from '@/components/admin/UploadInput'
 
-const VariantCreate = ({ variant, index }: { variant: any, index: number }) => {
+const VariantCreate = ({index }: { index: number }) => {
     // console.log(variant)
 
     const methods = useFormContext()
-    const {register, control, watch, getValues, setValue} = methods
-    const variants = watch('variants')
+    const {register, control} = methods
     
-    function handle_variant_change(data:any, type:string){
-        const arr = [...variants]
-        arr[index][type] = data
-        setValue('variants', arr)
-    }
 
     return (
         <Box>
@@ -29,6 +23,63 @@ const VariantCreate = ({ variant, index }: { variant: any, index: number }) => {
                 <MyFormControl label='SKU'>
                     <TextField fullWidth size='small' {...register(`variants.${index}.sku`)}/>
                 </MyFormControl>
+            </Box>
+
+            <Box mt={3}>
+                <Typography>
+                    Variation Image
+                </Typography>
+                <Button
+                    component="label"
+                    role={undefined}
+                    variant="outlined"
+                    sx={{ textTransform: 'unset', mt: 1}}
+                    tabIndex={-1}
+                    color='inherit'
+                    startIcon={<EditIcon />}
+                >
+                    Set Image
+                    <Controller
+                        control={control}
+                        name={`variants.${index}.image`}
+                        // rules={{ required: "image is required" }}
+                        render={({ field: { value, onChange, ...field } }) => {
+                            return <UploadInput multiple={false} onChange={(event: any) => onChange(event.target.files[0])}/>
+                        }}
+                    />
+                    
+                </Button>
+            </Box>
+
+            <Box mt={3}>
+                <Typography>
+                    Variation Image Gallery
+                </Typography>
+                <Button
+                    component="label"
+                    role={undefined}
+                    variant="outlined"
+                    sx={{ textTransform: 'unset', mt:1 }}
+                    tabIndex={-1}
+                    color='inherit'
+                    startIcon={<EditIcon />}
+                >
+                    Add Gallery Images
+                    <Controller
+                        control={control}
+                        name={`variants.${index}.gallery`}
+                        // rules={{ required: "image is required" }}
+                        render={({ field: { value, onChange, ...field } }) => {
+                            return <UploadInput multiple={true} onChange={(event: any) => {
+                                const image_list = []
+                                for(let i = 0; i < event.target.files.length; i++){
+                                    image_list.push(event.target.files[i])
+                                }
+                                onChange(image_list)
+                            }}/>
+                        }}
+                    />
+                </Button>
             </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
@@ -71,16 +122,7 @@ const VariantCreate = ({ variant, index }: { variant: any, index: number }) => {
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Shipping class'>
-                <FormControl fullWidth size="small">
-                    <Select
-                    
-                    onChange={(event, data: any) =>  handle_variant_change(data?.props.value, 'shipping_class')}
-                    value={variants[index].shipping_class}
-                    >
-                        <MenuItem value={'no_shipping_class'}>No shipping class</MenuItem>
-                        <MenuItem value={'shipping_class'}>class</MenuItem>
-                    </Select>
-                </FormControl>
+                <ShippingClassSelect label={`variants.${index}.shipping_class`} />
                 </MyFormControl>
             </Box>
 
@@ -88,16 +130,7 @@ const VariantCreate = ({ variant, index }: { variant: any, index: number }) => {
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
             <MyFormControl label='Tax class'>
-                <FormControl fullWidth size="small">
-                    <Select
-                    
-                    onChange={(event, data: any) =>  handle_variant_change(data?.props.value, 'tax_class')}
-                    value={variants[index].tax_class}
-                    >
-                        <MenuItem value={'none'}>None</MenuItem>
-                        <MenuItem value={'standard'}>Standard</MenuItem>
-                    </Select>
-                </FormControl>
+                <TaxClassSelect label={`variants.${index}.tax_class`}/>
             </MyFormControl>
             </Box>
 

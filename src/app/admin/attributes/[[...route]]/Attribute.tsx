@@ -7,7 +7,7 @@ import { DataGrid, GridColDef, GridRenderCellParams, GridToolbar } from '@mui/x-
 import { useQuery } from '@tanstack/react-query'
 import { useSetAtom } from 'jotai'
 import { useRouter } from 'next/router'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import ValueDrawer from './ValueDrawer'
 import EditIcon from '@mui/icons-material/Edit';
 
@@ -29,10 +29,11 @@ type AttributeProp = {
 const Attribute = ({attributeID}: {attributeID: number}) => {
     // const router = useRouter()
     const setAtomValue = useSetAtom(admin_drawer_value)
+    const [open, setOpen] = useState(false)
 
     const attribute = useQuery({
         queryKey: ['admin-attributes', attributeID],
-        queryFn: () => getAttribute(attributeID)
+        queryFn: () => getAttribute(attributeID),
     })
 
 
@@ -68,7 +69,7 @@ const Attribute = ({attributeID}: {attributeID: number}) => {
                     type: 'actions',
                     flex: 1,
                     renderCell: (params: GridRenderCellParams<any>) => (
-                        <Button sx={{textTransform: 'none'}} onClick={() => setAtomValue(params.row)}>
+                        <Button sx={{textTransform: 'none'}} onClick={() => {setAtomValue(params.row); setOpen(true)}}>
                             Edit
                         </Button>
                     ),
@@ -93,16 +94,19 @@ const Attribute = ({attributeID}: {attributeID: number}) => {
         <>
             <Box px={4} py={2} display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
                 <Typography variant="h4">
-                    {attribute.data.title}'s Values
+                    {attribute.data.title}&apos;s Values
                 </Typography>
-                <Button onClick={() => setAtomValue({
+                <Button onClick={() => {setAtomValue({
                     title: '',
                     slug: '',
                     image: '',
                     color: '',
                     attribute: attributeID,
                     type: attribute.data.type
-                })} startIcon={<EditIcon/>} size='small' variant='contained' sx={{textTransform: 'none', bgcolor: 'common.black', borderRadius: 8, '&:hover':{ bgcolor: 'grey.900'} }}>
+                });
+                setOpen(true)
+            }
+                } startIcon={<EditIcon/>} size='small' variant='contained' sx={{textTransform: 'none', bgcolor: 'common.black', borderRadius: 8, '&:hover':{ bgcolor: 'grey.900'} }}>
                     Create
                 </Button>
             </Box>
@@ -117,7 +121,7 @@ const Attribute = ({attributeID}: {attributeID: number}) => {
             }} 
             sx={{ '--DataGrid-overlayHeight': '300px' }}
             />
-            <ValueDrawer/>
+            <ValueDrawer open={open} setOpen={setOpen}/>
         </>
     )
 }

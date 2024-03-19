@@ -8,53 +8,139 @@ import { admin_product_MPN, admin_product_SKU, admin_product_description, admin_
 import TextEditor from '@/app/edit/TextEditor';
 import ProductSide from './ProductSide';
 
-import {useForm, FormProvider}from "react-hook-form"
+import {useForm, FormProvider, useFieldArray}from "react-hook-form"
+import ProductTitle from './ProductTitle';
+import { useMutation } from '@tanstack/react-query';
+import { createProduct } from '@/api/admin/products/productAPI';
 
 type FormValue = {
+  // main
   title: string,
   slug: string,
+  description: string,
   short_description: string,
-  regular_price: string,
-  sale_price: string,
+
+  // side
+  categories: any[],
+  tags: any[],
+
+  image: any,
+  gallery: any[]
+
+  
+  // general
+  regular_price: number,
+  sale_price: number,
   tax_status: string,
-  tax_class: string
+  tax_class: string,
+
+  // inventory
+  sku: string,
+  mpn: string,
+  stock_management: boolean,
+  stock_status: string,
+  sold_individually: boolean,
+  stock: number,
+  unit: string,
+
+  // shipping
+  weight: string,
+  length: string,
+  width: string,
+  height: string,
+  shipping_class: string,
+  
+  // attributes
+  attributes: any[],
+  selectedValues: {},
+  visibleAttributes: {},
+  variantAttributes: {},
+
+  // variants
+  variants: {
+    key_id: Date,
+
+    sku: string,
+    attributes: any[],
+    regular_price: number,
+    sale_price: number,
+
+    stock: number,
+
+    weight: string,
+    length: string,
+    width: string,
+    height: string,
+    shipping_class: string,
+
+    tax_class: string,
+
+    description: string,
+    mpn: string,
+  }[],
+
 }
 
 const ProductCreate = () => {
-  const setRegularPrice = useSetAtom(admin_product_regular_price)
-  const setSalePrice = useSetAtom(admin_product_sale_price)
-  const setSku = useSetAtom(admin_product_SKU)
-  const setMpn = useSetAtom(admin_product_MPN)
   const [description, setDescription] = useAtom(admin_product_description)
-
-  const [title, setTitle] = useAtom(admin_product_title)
-  const [slug, setSlug] = useAtom(admin_product_slug)
-
+  
   const methods = useForm<FormValue>({
     defaultValues:{
       title: '',
       slug: '',
+      description: '',
       short_description: '',
-      regular_price: '',
-      sale_price: '',
+
+      categories: [],
+      tags: [],
+
+      regular_price: 0,
+      sale_price: 0,
       tax_status: 'none',
-      tax_class: 'standard'
+      tax_class: 'standard',
+
+      sku: '',
+      mpn: '',
+      stock_management: false,
+      stock_status: '',
+      sold_individually: false,
+      stock: 0,
+      unit: '',
+
+      weight: '',
+      length: '',
+      width: '',
+      height: '',
+      shipping_class: '',
+
+      attributes: [],
+      selectedValues: {},
+      visibleAttributes: {},
+      variantAttributes: {},
+      variants: []
     }
   })
   const {register, handleSubmit} = methods
 
-  function onSubmit(data: FormValue){
-    console.log(data)
+  const create_product = useMutation({
+    mutationFn: (data) => createProduct(data),
+    onSuccess: (res) => {
+      console.log(res)
+    }
+  })
+
+  function onSubmit(data: FormValue | any){
+    create_product.mutate(data)
+    // var form_data = new FormData();
+
+    // for ( var key in data ) {
+    //     if (typeof key == 'string')
+    //     form_data.append(key, data[key]);
+    // }
+
+    // console.log(form_data.getAll('title'))
   }
   
-
-  useEffect(() => {
-    setRegularPrice(0)
-    setSalePrice(0)
-    setDescription('')
-    setSku('')
-    setMpn('')
-  }, [])
 
 
   return (
@@ -65,16 +151,14 @@ const ProductCreate = () => {
         <Grid item xs={9}>   
           <Box>
 
-            <Box>
-              <TextField {...register('title')} fullWidth size='small' label={'Title'} name='title' />
-            </Box>
+            <ProductTitle/>
 
             <Box mt={3}>
               <TextField {...register('slug')} fullWidth size='small' label={'Slug'} name='slug' />
             </Box>
 
             <Box mt={3}>
-              <TextEditor value={description} setValue={setDescription}/>
+              {/* <TextEditor value={description} setValue={setDescription}/> */}
               {/* <TextField multiline rows={3} fullWidth size='small' label={'Product description'} name='description' /> */}
             </Box>
 

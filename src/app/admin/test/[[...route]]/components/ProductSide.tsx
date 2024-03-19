@@ -1,24 +1,25 @@
 import { Box, Button, Paper, Typography } from '@mui/material'
-import React from 'react'
+import React, { useId } from 'react'
 import EditIcon from '@mui/icons-material/Edit';
 import UploadInput from '@/components/admin/UploadInput';
 import { useQuery } from '@tanstack/react-query';
 import { getCategoriesProduct } from '@/api/admin/categories/categoryAPI';
 import Category from './Category';
 import { register } from 'module';
-import { useFormContext } from 'react-hook-form';
+import { Controller, useFormContext } from 'react-hook-form';
+import ImageGallery from './ImageGallery';
 
 const ProductSide = () => {
-
+    
     const categories = useQuery({
         queryKey: ['admin-categories-product'],
         queryFn: () => getCategoriesProduct(),
     })
 
 
-    const methods = useFormContext()
-    const { register } = methods
+    const { control, watch } = useFormContext()
 
+    const {image, gallery} = watch()
     return (
         <Box>
             <Box>
@@ -47,8 +48,29 @@ const ProductSide = () => {
                             startIcon={<EditIcon />}
                         >
                             Set product image
-                            <UploadInput multiple={false} register={{...register('image')}} />
+                            <Controller
+                                control={control}
+                                name='image'
+                                // rules={{ required: "image is required" }}
+                                render={({ field: { value, onChange, ...field } }) => {
+                                    return <UploadInput multiple={false} onChange={(event: any) => onChange(event.target.files[0])}/>
+                                }}
+                            />
+                            
                         </Button>
+                    </Box>
+                    
+                    <Box p={2}>
+                        {image ?
+                        (
+                            typeof image == 'string' ?
+                            <Box component={'img'} src={image} width={'100%'}/>
+                            :
+                            <Box component={'img'} src={URL.createObjectURL(image)} width={'100%'}/>
+                        )
+                        :
+                        <Typography>No Image Provided</Typography>
+                        }
                     </Box>
                 </Paper>
             </Box>
@@ -69,8 +91,30 @@ const ProductSide = () => {
                             startIcon={<EditIcon />}
                         >
                             Set product gallery images
-                            <UploadInput multiple={true} register={{...register('gallery')}} />
+                            <Controller
+                                control={control}
+                                name='gallery'
+                                // rules={{ required: "image is required" }}
+                                render={({ field: { value, onChange, ...field } }) => {
+                                    return <UploadInput multiple={true} onChange={(event: any) => {
+                                        const image_list = []
+                                        for(let i = 0; i < event.target.files.length; i++){
+                                            image_list.push({file: event.target.files[i], id: crypto.randomUUID()})
+                                        }
+                                        onChange([...image_list, ...gallery])
+                                    }}/>
+                                }}
+                            />
                         </Button>
+                    </Box>
+
+                    <Box p={2}>
+                        {gallery ?
+                         <ImageGallery/>
+                        :
+                        <Typography>No Gallery Provided</Typography>
+                        }
+                       
                     </Box>
                 </Paper>
             </Box>

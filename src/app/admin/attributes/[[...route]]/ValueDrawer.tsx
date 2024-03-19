@@ -5,10 +5,9 @@ import { useAtom } from 'jotai'
 import {admin_drawer_value } from '@/Atoms'
 import ValueForm from './ValueForm'
 
-const ValueDrawer = () => {
-  const [value, setValue] = useAtom(admin_drawer_value)
+const ValueDrawer = ({open, setOpen} : {open: boolean, setOpen: any}) => {
   return (
-    <TemporaryDrawer state={value != null} setState={setValue}>
+    <TemporaryDrawer state={open} setState={setOpen}>
       <ValueForm/>
     </TemporaryDrawer>
   )
