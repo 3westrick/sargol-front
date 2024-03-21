@@ -8,18 +8,24 @@ import React from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import EditIcon from '@mui/icons-material/Edit';
 import UploadInput from '@/components/admin/UploadInput'
+import ImageGallery from './ImageGallery'
 
 const VariantCreate = ({index }: { index: number }) => {
     // console.log(variant)
 
     const methods = useFormContext()
-    const {register, control} = methods
-    
+    const {register, control, watch} = methods
+    const gallery = watch(`variants.${index}.gallery`)
+    const image = watch(`variants.${index}.image`)
 
     return (
         <Box>
 
-            <Box display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
+            <Box>
+              <TextField {...register(`variants.${index}.title`)} fullWidth size='small' label={'Title'} />
+            </Box>
+
+            <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='SKU'>
                     <TextField fullWidth size='small' {...register(`variants.${index}.sku`)}/>
                 </MyFormControl>
@@ -49,6 +55,19 @@ const VariantCreate = ({index }: { index: number }) => {
                     />
                     
                 </Button>
+
+                <Box p={2}>
+                    {image ?
+                    (
+                        typeof image == 'string' ?
+                        <Box component={'img'} src={image} width={'50%'}/>
+                        :
+                        <Box component={'img'} src={URL.createObjectURL(image)} width={'50%'}/>
+                    )
+                    :
+                    <Typography>No Image Provided</Typography>
+                    }
+                </Box>
             </Box>
 
             <Box mt={3}>
@@ -73,13 +92,21 @@ const VariantCreate = ({index }: { index: number }) => {
                             return <UploadInput multiple={true} onChange={(event: any) => {
                                 const image_list = []
                                 for(let i = 0; i < event.target.files.length; i++){
-                                    image_list.push(event.target.files[i])
+                                    image_list.push({file: event.target.files[i], id: crypto.randomUUID()})
                                 }
-                                onChange(image_list)
+                                onChange([...image_list, ...gallery])
                             }}/>
                         }}
                     />
                 </Button>
+            </Box>
+
+            <Box>
+            {gallery?.length > 0 ?
+            <ImageGallery label={`variants.${index}.gallery`} cols={3}/>
+            :
+            <Typography sx={{mt:2, color: 'gray'}}>No Gallery Provided</Typography>
+            }
             </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>

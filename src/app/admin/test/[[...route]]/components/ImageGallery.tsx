@@ -8,10 +8,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { useMutation } from '@tanstack/react-query';
 import { useFormContext } from 'react-hook-form';
 
-export default function ImageGallery() {
+export default function ImageGallery({label, cols} : {label : string, cols: number}) {
 
-  const {setValue, getValues, watch} = useFormContext()
-  const gallery = watch('gallery')
+  const {setValue, watch} = useFormContext()
+  const gallery = watch(label)
   
   const itemData = gallery.map((gallery_image: any) => gallery_image.image ? 
   {image:gallery_image.image,  id:gallery_image.id} 
@@ -20,11 +20,11 @@ export default function ImageGallery() {
   )
   function deleteImage(image: any){
     
-    setValue('gallery', gallery.filter((item: any) => item.id != image.id))
+    setValue(label, gallery.filter((item: any) => item.id != image.id))
   }
   
   return (
-    <ImageList sx={{ width: '100%', height: 450 }} cols={1}  rowHeight={'auto'}>
+    <ImageList sx={{ width: '100%', maxHeight: 450 }} cols={cols}  rowHeight={'auto'}>
       {itemData.map((item: any) => (
         <ImageListItem key={item.id}>
           <Box position={'relative'}>

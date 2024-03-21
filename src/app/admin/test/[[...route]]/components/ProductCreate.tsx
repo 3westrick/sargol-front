@@ -11,8 +11,36 @@ import ProductSide from './ProductSide';
 import {useForm, FormProvider, Controller}from "react-hook-form"
 import ProductTitle from './ProductTitle';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { createProduct, getProductWithId } from '@/api/admin/products/productAPI';
+import { createProduct, createVariant, getProductWithId } from '@/api/admin/products/productAPI';
 import ProductForm from './ProductForm';
+import { useRouter } from "next/navigation";
+
+type FormVariant ={
+  key_id: string,
+  title: string,
+  // slug: string,
+  sku: string,
+  attributes: any[],
+  values: any[],
+  regular_price: number,
+  sale_price: number,
+
+  stock: number,
+
+  image: any,
+  gallery: any[],
+
+  weight: string,
+  length: string,
+  width: string,
+  height: string,
+  shipping_class: string,
+
+  tax_class: string,
+
+  description: string,
+  mpn: string,
+}
 
 type FormValue = {
   // main
@@ -58,35 +86,12 @@ type FormValue = {
   variantAttributes: [],
 
   // variants
-  variants: {
-    key_id: Date,
-
-    sku: string,
-    attributes: any[],
-    regular_price: number,
-    sale_price: number,
-
-    stock: number,
-
-    image: any,
-    gallery: any[],
-
-    weight: string,
-    length: string,
-    width: string,
-    height: string,
-    shipping_class: string,
-
-    tax_class: string,
-
-    description: string,
-    mpn: string,
-  }[],
+  variants: FormVariant[],
 
 }
 
 const ProductCreate = () => {
-  
+  const router = useRouter()
   const methods = useForm<FormValue>({
     defaultValues:{
       title: '',
@@ -160,24 +165,59 @@ const ProductCreate = () => {
     }
 
   })
-  const {register, handleSubmit, control} = methods
+  const {register, handleSubmit, control, getValues} = methods
 
-  const create_product = useMutation({
-    mutationFn: (data: any) => createProduct(data),
-    onSuccess: (res) => {
+  const create_variant = useMutation({
+    mutationFn: (data: any) => createVariant(data),
+    onSuccess: (res, variables, context) => {
       console.log(res)
     },
     onError: (error) => {
       console.log(error)
     }
-
   })
 
+  const create_product = useMutation({
+    mutationFn: (data: any) => createProduct(data),
+    onSuccess: (res, variables, context) => {
+      const variants = getValues('variants')
+      const parent_id = res.id
+
+      variants.map((variant: FormVariant | any) => {
+        const form_data = new FormData()
+
+        form_data.append('parent', parent_id)
+        form_data.append('slug', variant.id)
+        
+        for ( let k in variant ) {
+          if (k == 'gallery'){
+            for(let i = 0; i < variant[k]?.length; i++){
+              form_data.append(k, variant[k][i]);
+            }
+          }else if(k == 'image'){
+            if(variant[k]) form_data.append(k, variant[k]);
+          }else if(k == 'attributes'){
+            variant.attributes.map((item:any) => form_data.append(k, item))
+          }else if(k == 'values'){
+            variant.values.map((item:any) => form_data.append(k, item))
+          }else{
+            form_data.append(k, variant[k])
+          }
+        }
+
+        create_variant.mutate(form_data)
+      })
+
+      router.push(`/admin/test/edit/${res.id}`)
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
+
+
   function onSubmit(data: FormValue | any){
-    // create_product.mutate(data)
-    // console.log(data)
-    // return
-    
+
     const form_data = new FormData()
 
     for ( let key in data ) {
@@ -195,12 +235,22 @@ const ProductCreate = () => {
         data[key].map((item:any) => form_data.append(key, item))
       }else if(key == 'image'){
         if(data[key]) form_data.append(key, data[key]);
+      }else if(key == 'variants'){
+
+        data.variants.map((variant: any) => {
+            form_data.append(`variants`, variant.id);
+            
+            for( let variant_key in variant ){
+              form_data.append(variant.id, variant[variant_key])
+              // console.log(variant_key, variant[variant_key])
+            }
+        })
+        // if(data[key]) form_data.append(key, data[key]);
       }else{
         form_data.append(key, data[key]);
       }
     }
     
-    // console.log(...form_data)
     create_product.mutate(form_data)
   }
   

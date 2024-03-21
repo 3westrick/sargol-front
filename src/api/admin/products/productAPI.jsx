@@ -53,3 +53,29 @@ export async function createProduct(data) {
         throw error
     })
 }
+
+export async function createVariant(data) {
+    const session = await auth()
+    return await AxiosAdmin.post(`products/variant/create/`,data,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`,
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        console.log(error.response)
+        throw error
+    })
+}
+
+export async function editVariant(data) {
+    const session = await auth()
+    return await AxiosAdmin.put(`products/variant/edit/${data.get('key_id')}/`,data,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`,
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        console.log(error.response)
+        throw error
+    })
+}

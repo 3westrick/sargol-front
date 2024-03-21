@@ -36,9 +36,9 @@ const AttributePage = async ({params}: {
                 <ProductEdit productID={params.route[1]}/>
             </HydrationBoundary>
           )
-    }
+    }else
 
-    if (params.route[0].toLowerCase() == 'create') {
+    if (params.route && params.route[0].toLowerCase() == 'create') {
         // await queryClient.fetchQuery({
         //     queryKey: ['admin-products', params.route[1]],
         //     queryFn: () => getAttribute(params.route[1]),

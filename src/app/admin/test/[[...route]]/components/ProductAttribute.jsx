@@ -26,9 +26,10 @@ const ProductAttribute = () => {
         selectedValues,
         visibleAttributes, 
         variantAttributes, 
-        attributes: selectedAttributes
+        attributes: selectedAttributes,
+        variants
     } = watch()
-    console.log(selectedValues)
+    
     
     const change_attributes = (data) => {
         setValue('attributes', data.sort((a,b) => a.id - b.id))
@@ -61,17 +62,23 @@ const ProductAttribute = () => {
     }
 
     const change_check_variant= (e, attribute) => {
-        // const obj = {}
-        // obj[attribute.id] = e.target.checked
-        // setValue('variantAttributes', {...variantAttributes, ...obj})
+        
         const data = e.target.checked
         const selected = [...variantAttributes]
         if (data){
             selected.push(attribute.id)
             setValue('variantAttributes' ,[...selected])
+            const s = variants.map(item => ({ ...item ,attributes : [...selected]}))
+            const b = s.map(item => ({...item, values: item.values.slice(0,item.attributes.length)}))
+            setValue('variants', b)
         }else{
             setValue('variantAttributes', selected.filter(item => item != attribute.id))
+            const s = variants.map(item => ({ ...item ,attributes : selected.filter(item => item != attribute.id)}))
+            const b = s.map(item => ({...item, values: item.values.slice(0,item.attributes.length)}))
+
+            setValue('variants', b)
         }
+
     }
 
 

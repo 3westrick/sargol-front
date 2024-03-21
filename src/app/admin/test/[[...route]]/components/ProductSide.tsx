@@ -110,7 +110,7 @@ const ProductSide = () => {
 
                     <Box p={2}>
                         {gallery ?
-                         <ImageGallery/>
+                         <ImageGallery label={'gallery'} cols={1}/>
                         :
                         <Typography>No Gallery Provided</Typography>
                         }

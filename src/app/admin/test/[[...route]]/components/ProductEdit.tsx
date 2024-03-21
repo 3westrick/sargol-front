@@ -1,18 +1,43 @@
 "use client"
-import { Box, Grid, Paper, TextField, Typography } from '@mui/material';
+import { Box} from '@mui/material';
 import React from 'react'
-import ProductData from './ProductData';
-import { useAtom } from 'jotai';
-import { admin_product_description } from '@/Atoms';
-import TextEditor from '@/app/edit/TextEditor';
-import ProductSide from './ProductSide';
 
 import {useForm, FormProvider}from "react-hook-form"
 import ProductTitle from './ProductTitle';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { editProduct, getProductWithId } from '@/api/admin/products/productAPI';
+import { createVariant,editVariant , editProduct, getProductWithId } from '@/api/admin/products/productAPI';
 import ProductForm from './ProductForm';
 import { getAttributes } from '@/api/admin/attributes/attributeAPI';
+import { useRouter } from 'next/navigation';
+
+type FormVariant ={
+  id: string | number,
+  key_id: string,
+
+  title: string,
+  // slug: string,
+  sku: string,
+  attributes: any[],
+  values: any[],
+  regular_price: number,
+  sale_price: number,
+
+  stock: number,
+
+  image: any,
+  gallery: any[],
+
+  weight: string,
+  length: string,
+  width: string,
+  height: string,
+  shipping_class: string,
+
+  tax_class: string,
+
+  description: string,
+  mpn: string,
+}
 
 type FormValue = {
   // main
@@ -58,32 +83,12 @@ type FormValue = {
   variantAttributes: {},
 
   // variants
-  variants: {
-    key_id: Date,
-
-    sku: string,
-    attributes: any[],
-    regular_price: number,
-    sale_price: number,
-
-    stock: number,
-
-    weight: string,
-    length: string,
-    width: string,
-    height: string,
-    shipping_class: string,
-
-    tax_class: string,
-
-    description: string,
-    mpn: string,
-  }[],
+  variants: FormVariant[],
 
 }
 
 const ProductEdit = ({productID}: {productID: number}) => {
-
+  const router = useRouter()
   const {data: product} = useQuery({
     queryKey: ['admin-product', productID],
     queryFn: () => getProductWithId(productID),
@@ -126,18 +131,77 @@ const ProductEdit = ({productID}: {productID: number}) => {
         selectedValues: product.values,
         visibleAttributes: product.attributes.filter((item: any) => item.visible).map((item: any) => item.attribute.id),
         variantAttributes: product.attributes.filter((item: any) => item.variant).map((item: any) => item.attribute.id),
-        variants: []
-      }
+        variants: product.variants.map((item: FormVariant) => ({...item, key_id: item.id}))
+      },
   })
-  const {handleSubmit} = methods
+  const {handleSubmit, getValues, reset} = methods
 
   const queryClient = useQueryClient()
+
+
+  const create_variant = useMutation({
+    mutationFn: (data: any) => createVariant(data),
+    onSuccess: (res, variables, context) => {
+      // console.log(res)
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
+
+
+  const edit_variant = useMutation({
+    mutationFn: (data: any) => editVariant(data),
+    onSuccess: (res, variables, context) => {
+      console.log(res)
+    },
+    onError: (error) => {
+      console.log(error)
+    }
+  })
 
   const edit_product = useMutation({
     mutationFn: (data: any) => editProduct(productID, data),
     onSuccess: (res) => {
-      console.log(res)
+      const variants = getValues('variants')
+      const parent_id = res.id
+
+      variants.map((variant: FormVariant | any) => {
+        const form_data = new FormData()
+        form_data.append('parent', parent_id)
+        form_data.append('slug', variant.key_id)
+
+        for ( let k in variant ) {
+          if (k == 'gallery'){
+            for(let i = 0; i < variant[k]?.length; i++){
+              if (variant[k][i].image)
+                form_data.append(k, variant[k][i].id);
+              else
+                form_data.append(k, variant[k][i].file);
+            }
+          }else if(k == 'image'){
+            if(variant[k] && typeof variant[k] != 'string') form_data.append(k, variant[k]);
+          }else if(k == 'attributes'){
+            variant.attributes.map((item:any) => form_data.append(k, item))
+          }else if(k == 'values'){
+            variant.values.map((item:any) => form_data.append(k, item))
+          }else{
+            form_data.append(k, variant[k])
+          }
+        }
+        // form_data.get('key_id')
+        // console.log(!isNaN(variant.key_id))
+        if(!isNaN(variant.key_id)){
+          // edit
+          edit_variant.mutate(form_data)
+        }else{
+          // create
+          create_variant.mutate(form_data)
+        }
+
+      })
       queryClient.invalidateQueries({queryKey: ['admin-product', productID]})
+      router.push(`/admin/test/edit/${res.id}`)
     }
   })
 
@@ -161,11 +225,12 @@ const ProductEdit = ({productID}: {productID: number}) => {
         data[key].map((item:any) => form_data.append(key, item))
       }else if(key == 'image'){
         if(data[key] && typeof data[key] != 'string') form_data.append(key, data[key]);
+      }else if(key == 'variants'){
+        data.variants.map((item:any) => !isNaN(item.key_id) && form_data.append('variants', item.key_id))
       }else{
         form_data.append(key, data[key]);
       }
     }
-
     // console.log(...form_data)
     edit_product.mutate(form_data)
     
