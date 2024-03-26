@@ -8,21 +8,9 @@ type Category = {
     parent: number | undefined | null,
 }
 
-export async function getCategories(query:string, field:string, order:string, limit: number, offset: number) {
+export async function getCoupons(query:string, field:string, order:string, limit: number, offset: number) {
     const session = await auth()
-    return await AxiosAdmin.get(`categories/?limit=${limit}&offset=${offset}&search=${query}&ordering=${order}${field}`,{
-        headers: {
-            'Authorization': `Bearer ${session?.user.access}`
-        }
-    }).then(response => response.data)
-    .catch(error => {
-        throw error
-    })
-}
-
-export async function getCategoriesProduct() {
-    const session = await auth()
-    return await AxiosAdmin.get('categories/product/',{
+    return await AxiosAdmin.get(`coupons/?limit=${limit}&offset=${offset}&search=${query}&ordering=${order}${field}`,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
@@ -33,13 +21,36 @@ export async function getCategoriesProduct() {
 }
 
 
-export async function createCategory(category:any) {
+export async function getCoupon(couponId: number) {
     const session = await auth()
-    return await AxiosAdmin.post(`categories/create/`,{
-        title: category.title,
-        slug: category.slug,
-        parent: category.parent
-    },{
+    return await AxiosAdmin.get(`coupons/${couponId}/`,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        throw error
+    })
+}
+
+
+
+export async function createCoupon(coupon:any) {
+    const session = await auth()
+    return await AxiosAdmin.post(`coupons/create/`,coupon,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        console.log(error.response)
+        throw error
+    })
+}
+
+export async function updateCoupon(coupon:any) {
+    const session = await auth()
+    return await AxiosAdmin.put(`coupons/edit/${coupon.id}/`,coupon,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
@@ -50,13 +61,9 @@ export async function createCategory(category:any) {
     })
 }
 
-export async function updateCategory(category:any) {
+export async function deleteCoupon(coupon:any) {
     const session = await auth()
-    return await AxiosAdmin.put(`categories/edit/${category.id}/`,{
-        title: category.title,
-        slug: category.slug,
-        parent: category.parent
-    },{
+    return await AxiosAdmin.delete(`coupons/edit/${coupon.id}/`,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
@@ -66,3 +73,4 @@ export async function updateCategory(category:any) {
         throw error
     })
 }
+

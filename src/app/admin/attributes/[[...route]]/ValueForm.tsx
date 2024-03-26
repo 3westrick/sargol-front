@@ -44,7 +44,7 @@ const ValueForm = () => {
     const valueMutation = useMutation({
         mutationFn: (data: any) => value.id ?  updateValue(data): createValue(data),
         onSuccess: (res) => {
-            queryClient.invalidateQueries({queryKey: ['admin-attributes']})
+            queryClient.invalidateQueries({queryKey: ['admin-values']})
             
             if (value.id) {
                 queryClient.invalidateQueries({queryKey:['admin-attributes', value.id]})
@@ -71,7 +71,6 @@ const ValueForm = () => {
                 
             form_data.append(key, data[key]);
         }
-        console.log(form_data)
         valueMutation.mutate(form_data)
                 
     }

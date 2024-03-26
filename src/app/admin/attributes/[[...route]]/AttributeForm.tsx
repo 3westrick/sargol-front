@@ -32,7 +32,9 @@ const AttributeForm = () => {
     const attributeMutation = useMutation({
         mutationFn: (data) => attribute?.id ?  updateAttribute(data): createAttribute(data),
         onSuccess: (res) => {
-            queryClient.invalidateQueries({queryKey: ['admin-attributes']})
+            queryClient.invalidateQueries({
+                queryKey: ['admin-attributes'],
+            })
             setSnackbar({
                 state: true,
                 message: attribute?.id ?  "Attribute Updated" : "Attribute Created"

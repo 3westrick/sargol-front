@@ -15,9 +15,9 @@ type Value = {
     image: any,
 }
 
-export async function getAttributes() {
+export async function getAttributes(query:string, field:string, order:string, limit: number, offset: number) {
     const session = await auth()
-    return await AxiosAdmin.get('attributes/',{
+    return await AxiosAdmin.get(`attributes/?limit=${limit}&offset=${offset}&search=${query}&ordering=${order}${field}`,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
@@ -30,6 +30,19 @@ export async function getAttributes() {
 export async function getAttribute(attributeID: number) {
     const session = await auth()
     return await AxiosAdmin.get(`attributes/${attributeID}/`,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        throw error
+    })
+}
+
+
+export async function getValues(attributeID: number, query:string, field:string, order:string, limit: number, offset: number) {
+    const session = await auth()
+    return await AxiosAdmin.get(`values/?attribute__id=${attributeID}&limit=${limit}&offset=${offset}&search=${query}&ordering=${order}${field}`,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }

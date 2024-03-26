@@ -21,7 +21,7 @@ export default function CustomeCheckboxAutoComplete({ items, itemKey, itemValue,
 
     const { register, getValues } = methods
     // console.log(value)
-    
+    // const [count, setCount] = React.useState(0)
     return (
         <Autocomplete
             fullWidth
@@ -39,10 +39,9 @@ export default function CustomeCheckboxAutoComplete({ items, itemKey, itemValue,
                 return option.id == value.id
             }}
             getOptionLabel={(option) => option[itemLable]}
-            renderOption={(props, option, { selected }) => {
-                // delete props.key;
-                // console.log(option)
-                return <li key={option[itemKey]} {...props}>
+            renderOption={(props: any, option, { selected }) => {
+                delete props.key
+                return <li key={option.id} {...props}>
                     <Checkbox
                         icon={icon}
                         checkedIcon={checkedIcon}

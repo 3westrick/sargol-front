@@ -142,9 +142,12 @@ export default function MiniDrawer({children}: {children: React.ReactNode}) {
         <Divider />
         <List>
             
+        <MyMenuItem text={'Roles And Permissions'} link={'/admin/roles'} open={open} icon={<InboxIcon/>}/>
+        <MyMenuItem text={'Users'} link={'/admin/users'} open={open} icon={<InboxIcon/>}/>
         <MyMenuItem text={'Attributes'} link={'/admin/attributes'} open={open} icon={<InboxIcon/>}/>
         <MyMenuItem text={'Categories'} link={'/admin/categories'} open={open} icon={<InboxIcon/>}/>
         <MyMenuItem text={'Products'} link={'/admin/products'} open={open} icon={<InboxIcon/>}/>
+        <MyMenuItem text={'Coupons'} link={'/admin/coupons'} open={open} icon={<InboxIcon/>}/>
         
         </List>
         

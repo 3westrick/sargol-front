@@ -8,7 +8,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { createCategory, getCategories, updateCategory } from '@/api/admin/categories/categoryAPI'
 import CustomSelect from '@/components/admin/CustomSelect'
 import SimpleSelect from '@/components/admin/SimpleSelect'
-import { Controller, useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
+import CategorySelect from './components/CategorySelect'
 // import { updateAttribute } from '@/app/admin/attributes/actions'
 
 type FormValue = {
@@ -21,19 +22,21 @@ type FormValue = {
 const CategoryFrom = () => {
     const [category, setCategory] = useAtom(admin_drawer_category)
     const setSnackbar = useSetAtom(admin_snackbar)
-    const {register, control, handleSubmit} = useForm<FormValue>({
+    const methods  = useForm<FormValue>({
         defaultValues:{
             id: category.id,
             title: category.title,
             slug: category.slug,
-            parent: category.parent ?? "none",
+            parent: category.parent ,
         }
     })
 
-    const categories = useQuery({
-        queryKey: ['admin-categories'],
-        queryFn: () => getCategories()
-    })
+    const {register, control, handleSubmit} = methods
+
+    // const categories = useQuery({
+    //     queryKey: ['admin-categories'],
+    //     queryFn: () => getCategories("","","",10,0)
+    // })
 
     const queryClient = useQueryClient()
     const categoryMutation = useMutation({
@@ -52,11 +55,12 @@ const CategoryFrom = () => {
     }
     
     const handleClick = (data: FormValue | any) => {
-        if(data.parent == 'none') data.parent = null
+        if(data.parent) data.parent = data.parent.id
         categoryMutation.mutate(data)        
     }
     return (
         <Box p={4} alignItems={'unset'}>
+            <FormProvider {...methods}>
             <form onSubmit={handleSubmit(handleClick)}>
             <Stack>
                 <Box>
@@ -68,37 +72,7 @@ const CategoryFrom = () => {
                     {...register('slug')}/>
                 </Box>
                 <Box mt={4}>
-                    <Controller
-                        control={control}
-                        name={'parent'}
-                        // rules={{ required: "Recipe picture is required" }}
-                        render={({ field: { value, onChange, ...field } }) => {
-                        return (
-                            <FormControl fullWidth size="small">
-                                <InputLabel id="demo-simple-select-label">Parent</InputLabel>
-                                <Select
-                                id="demo-simple-select-label"
-                                label={'Parent'}
-                                value={value}
-                                onChange={(event)=> onChange(event.target.value)}
-                                >
-                                <MenuItem value={"none"}>None</MenuItem>
-                                {categories.data.filter((opt:any, index:any) => {
-                                    if (category.id){
-                                        if(category.id != opt.id){
-                                            return opt
-                                        }
-                                    }else{
-                                        return opt
-                                    }
-
-                                }).map((opt:any) => <MenuItem key={opt.id} value={opt.id}>{opt.title}</MenuItem>)}
-                                </Select>
-                            </FormControl>
-                            )
-                        }
-                    }
-                    />
+                   <CategorySelect/>
                 </Box>
 
                 <Box mt={3}>
@@ -108,6 +82,7 @@ const CategoryFrom = () => {
                 </Box>
             </Stack>
             </form>
+            </FormProvider>
         </Box>
     )
 }
