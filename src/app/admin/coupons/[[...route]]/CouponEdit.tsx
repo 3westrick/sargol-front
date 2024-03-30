@@ -16,8 +16,8 @@ type FormValue = {
     free_shipping : boolean,
     expired_at : any,
 
-    minimum : number,
-    maximum : number,
+    minimum : number | string,
+    maximum : number | string,
     individual_use : boolean,
     exclude_sale_items : boolean,
 
@@ -29,9 +29,9 @@ type FormValue = {
 
     allowed_users : any[],
 
-    usage_limit : number,
-    item_limit : number,
-    user_limit : number,
+    usage_limit : number | string,
+    item_limit : number | string,
+    user_limit : number | string,
 }
 
 const CouponEdit = ({couponId}: {couponId : number}) => {
@@ -53,8 +53,8 @@ const CouponEdit = ({couponId}: {couponId : number}) => {
             free_shipping : coupon.free_shipping,
             expired_at : coupon.expired_at,
         
-            minimum : coupon.minimum,
-            maximum : coupon.maximum,
+            minimum : coupon.minimum == -1 ? '' : coupon.minimum,
+            maximum : coupon.maximum == -1 ? '' : coupon.maximum,
             individual_use : coupon.individual_use,
             exclude_sale_items : coupon.exclude_sale_items,
         
@@ -66,9 +66,9 @@ const CouponEdit = ({couponId}: {couponId : number}) => {
         
             allowed_users : coupon.allowed_users,
         
-            usage_limit : coupon.usage_limit,
-            item_limit : coupon.item_limit,
-            user_limit : coupon.user_limit,
+            usage_limit : coupon.usage_limit == -1 ? '' : coupon.usage_limit,
+            item_limit : coupon.item_limit == -1 ? '' : coupon.item_limit,
+            user_limit : coupon.user_limit == -1 ? '' : coupon.user_limit,
         }
     })
 
@@ -89,6 +89,13 @@ const CouponEdit = ({couponId}: {couponId : number}) => {
         data.exclude_products = data.exclude_products.map(item => item.id)
         data.categories = data.categories.map(item => item.id)
         data.exclude_categories = data.exclude_categories.map(item => item.id)
+
+        data.minimum = data.minimum == '' ? -1 : data.minimum
+        data.maximum = data.maximum == '' ? -1 : data.maximum
+        data.usage_limit = data.usage_limit == '' ? -1 : data.usage_limit
+        data.item_limit = data.item_limit == '' ? -1 : data.item_limit
+        data.user_limit = data.user_limit == '' ? -1 : data.user_limit
+
         // console.log(data)
         edit_coupon.mutate(data)
     }

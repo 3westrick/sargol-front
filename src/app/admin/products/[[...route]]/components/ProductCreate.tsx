@@ -189,7 +189,7 @@ const ProductCreate = () => {
 
 
   function onSubmit(data: FormValue | any){
-
+    if (data.sale_price == "") data.sale_price = 0
     const form_data = new FormData()
 
     for ( let key in data ) {

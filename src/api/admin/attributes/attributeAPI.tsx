@@ -54,7 +54,7 @@ export async function getValues(attributeID: number, query:string, field:string,
 
 export async function createAttribute(attribute:any) {
     const session = await auth()
-    return await AxiosAdmin.post(`attributes/create/`,{
+    const res =  await AxiosAdmin.post(`attributes/create/`,{
         title: attribute.title,
         slug: attribute.slug,
         type: attribute.type,
@@ -62,11 +62,11 @@ export async function createAttribute(attribute:any) {
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
-    }).then(response => response.data)
+    }).then(response => ({success: response.data}))
     .catch(error => {
-        console.log(error.response)
-        throw error
+        return {error: error.response.data}
     })
+    return res
 }
 
 export async function updateAttribute(attribute:any) {

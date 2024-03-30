@@ -1,12 +1,13 @@
 "use client"
 import { getProducts } from '@/api/admin/products/productAPI'
 import { Box, Button, TextField, Typography } from '@mui/material'
-import { DataGrid, GridCallbackDetails, GridColDef, GridSortModel } from '@mui/x-data-grid';
+import { DataGrid, GridCallbackDetails, GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link'
 import React from 'react'
 import { styled } from '@mui/material/styles';
 import { debounce } from '@mui/material/utils';
+import { useRouter } from 'next/navigation';
 
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
@@ -82,6 +83,7 @@ function CustomNoRowsOverlay() {
 }
 
 const Products = () => {
+  const router = useRouter()
 
   const [query, setQuery] = React.useState("")
   const [field, setField] = React.useState("")
@@ -126,6 +128,12 @@ const columns: GridColDef[] = [
   { field: 'id', headerName: 'Id', width: 150 },
   { field: 'title', headerName: 'Title', width: 150 },
   { field: 'slug', headerName: 'Slug', width: 150 },
+  {
+    field: 'actions',headerName: '', sortable:false, width: 150, renderCell: ({id, row, value}) => {
+      return <Button onClick={() => router.push(`/admin/products/edit/${id}`)}>Edit</Button>
+    },
+    disableColumnMenu: true
+  }
 ];
 
   return (

@@ -1,11 +1,19 @@
 "use client"
 import { getProductWithSlug } from '@/api/client/products/productAPI'
 import { Box, Button, TextField, Typography } from '@mui/material'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 import React, { useRef, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { createItem } from '@/api/client/orders/orderAPI'
+import ProductAddQuantity from './components/ProductAddQuantity'
+
+type FormValue = {
+    quantity: number,
+    product: number
+}
 
 const ProductSingle = ({slug}: {slug: string}) => {
     const product = useQuery({
@@ -13,12 +21,19 @@ const ProductSingle = ({slug}: {slug: string}) => {
         queryFn:() => getProductWithSlug(slug)
     })
 
+    const methods = useForm<FormValue>({
+        defaultValues: {
+            quantity: 1
+        }
+    })
+    const { setValue, handleSubmit } = methods
+
 
     const pathname = usePathname();
     const router = useRouter()
     const searchParams = useSearchParams()    
 
-    const {data, isFetched, } = product
+    const {data, } = product
 
     const value_ids = data.values.map((item: any) => item.id)
 
@@ -29,7 +44,6 @@ const ProductSingle = ({slug}: {slug: string}) => {
 
     const param_queries = attributes.filter((attribute: any) => searchParams.get(attribute.slug)).map((attribute: any) => ({attribute: attribute.slug, value: searchParams.get(attribute.slug)}))
 
-    // const variants: any[] = []
     
     const variants = data.variants.filter((variant: any) => {
         let found_all = true
@@ -54,29 +68,75 @@ const ProductSingle = ({slug}: {slug: string}) => {
     const selected_all_att = attributes.length == param_queries.length
     const can_purchase = single_product || (single_variant && selected_all_att)
     const selected_none = param_queries.length == 0
+    const detected_none = (param_queries.length > 0 && variants.length == 0)
     
     const gallery = []
+    let price = ""
 
     if (single_product){
         gallery.push(data.image)
         data.gallery.map((image: any) => gallery.push(image.image))
+        price = data.regular_price
     }else{
-        if(selected_none){
+        if (selected_none){
             gallery.push(data.image)
             data.gallery.map((image: any) => gallery.push(image.image))
             variants.map((variant: any) => {
                 gallery.push(variant.image)
                 variant.gallery.map((image: any) => gallery.push(image.image))
             })
+        }else if (detected_none){
+            gallery.push(data.image)
+            data.gallery.map((image: any) => gallery.push(image.image))
+            let max_price = 0
+            let min_price = 0
+            data.variants.map((variant: any) => {
+                gallery.push(variant.image)
+                variant.gallery.map((image: any) => gallery.push(image.image))
+                max_price = max_price > variant.regular_price ? max_price : variant.regular_price
+                min_price = min_price < -variant.regular_price ? min_price : variant.regular_price
+            })
+            price = `Price: Not Available`
+
         }else{
             variants.map((variant: any) => {
                 gallery.push(variant.image)
                 variant.gallery.map((image: any) => gallery.push(image.image))
             })
+
+            if (variants.length == 1){
+                price = `Price: ${variants[0].regular_price}`
+            }else{
+                let max_price = 0
+                let min_price = 0
+                variants.map((variant: any) => {
+                    max_price = max_price > variant.regular_price ? max_price : variant.regular_price
+                    min_price = min_price < -variant.regular_price ? min_price : variant.regular_price
+                })
+                price = `Price: ${min_price} - ${max_price}`
+            }
+
         }
     }
 
-    console.log(gallery)
+    const add_to_basket = useMutation({
+        mutationFn: (data:FormValue) => createItem(data),
+        onSuccess: (res) => {
+            console.log("added to basket")
+        }
+    })
+
+    function handle_submit(formData:FormValue){
+        if (can_purchase){
+            if(single_product){
+                formData.product = data.id
+            }else{
+                formData.product = variants[0].id
+            }
+            add_to_basket.mutate(formData)
+        }
+    }
+
 
     return (
         <div>
@@ -113,10 +173,22 @@ const ProductSingle = ({slug}: {slug: string}) => {
             </Box>
 
             <Box>
-                <Button variant='contained' disabled={!can_purchase}>
+                {price}
+            </Box>
+
+            <FormProvider {...methods}>
+            <form onSubmit={handleSubmit(handle_submit)}>
+            <Box>
+                <ProductAddQuantity/>
+            </Box>
+
+            <Box>
+                <Button type='submit' variant='contained' disabled={!can_purchase}>
                     Purchase
                 </Button>
             </Box>
+            </form>
+            </FormProvider>
 
 
             

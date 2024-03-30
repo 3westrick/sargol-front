@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { debounce } from '@mui/material/utils';
 import { getCoupons } from '@/api/admin/coupons/couponAPI';
 import { DataGrid, GridCallbackDetails, GridColDef, GridSortModel } from '@mui/x-data-grid';
+import { useRouter } from 'next/navigation';
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -81,6 +82,9 @@ function CustomNoRowsOverlay() {
 }
 
 const Coupons = () => {
+
+  const router = useRouter()
+
   const [query, setQuery] = React.useState("")
   const [field, setField] = React.useState("")
   const [order, setOrder] = React.useState("")
@@ -124,7 +128,13 @@ const Coupons = () => {
       },
     },
     { field: 'description', headerName: 'Description', width: 300 },
-    { field: 'amound', headerName: 'Coupon amount', width: 150 },
+    { field: 'amount', headerName: 'Coupon amount', width: 150 },
+    {
+      field: 'actions',headerName: '', sortable:false, width: 150, renderCell: ({id, row, value}) => {
+        return <Button onClick={() => router.push(`/admin/coupons/edit/${id}`)}>Edit</Button>
+      },
+      disableColumnMenu: true
+    }
 ];
 
   React.useEffect(() => {

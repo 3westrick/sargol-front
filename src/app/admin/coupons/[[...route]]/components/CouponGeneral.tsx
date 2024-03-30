@@ -22,7 +22,7 @@ const CouponGeneral = () => {
 
             <Box mt={3}>
                 <Box display={'flex'} alignItems={'center'}>
-                <InputLabel sx={{width: 200}}>Sold individually</InputLabel>
+                <InputLabel sx={{width: 200}}>Allow free shipping</InputLabel>
                 <Controller
                 name='free_shipping'
                 control={control}

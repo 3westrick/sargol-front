@@ -32,6 +32,7 @@ const AttributeForm = () => {
     const attributeMutation = useMutation({
         mutationFn: (data) => attribute?.id ?  updateAttribute(data): createAttribute(data),
         onSuccess: (res) => {
+            if (res.error) console.log(res.error)
             queryClient.invalidateQueries({
                 queryKey: ['admin-attributes'],
             })
@@ -40,6 +41,7 @@ const AttributeForm = () => {
                 message: attribute?.id ?  "Attribute Updated" : "Attribute Created"
             })
         },
+
     })
 
     if (attributeMutation.isError){

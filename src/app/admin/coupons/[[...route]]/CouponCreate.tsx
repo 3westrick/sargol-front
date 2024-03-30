@@ -6,6 +6,7 @@ import { Box, Button } from '@mui/material'
 import CouponForm from './components/CouponForm'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createCoupon } from '@/api/admin/coupons/couponAPI'
+import { useRouter } from 'next/navigation'
 type FormValue = {
     id : number,
     title : string,
@@ -16,8 +17,8 @@ type FormValue = {
     free_shipping : boolean,
     expired_at : any,
 
-    minimum : number,
-    maximum : number,
+    minimum : number | string,
+    maximum : number | string,
     individual_use : boolean,
     exclude_sale_items : boolean,
 
@@ -29,12 +30,14 @@ type FormValue = {
 
     allowed_users : any[],
 
-    usage_limit : number,
-    item_limit : number,
-    user_limit : number,
+    usage_limit : number | string,
+    item_limit : number | string,
+    user_limit : number | string,
 }
 
 const CouponCreate = () => {
+
+    const router = useRouter()
     
     const methods = useForm<FormValue>({
         defaultValues: {
@@ -74,6 +77,7 @@ const CouponCreate = () => {
         mutationFn: (data: FormValue) => createCoupon(data),
         onSuccess:(res) => {
             queryClient.invalidateQueries({queryKey: ['admin-coupons']})
+            router.push(`/admin/coupons/edit/${res.id}`)
         }
     })
 
@@ -83,7 +87,13 @@ const CouponCreate = () => {
         data.exclude_products = data.exclude_products.map(item => item.id)
         data.categories = data.categories.map(item => item.id)
         data.exclude_categories = data.exclude_categories.map(item => item.id)
-        // console.log(data)
+
+        data.minimum = data.minimum == '' ? -1 : data.minimum
+        data.maximum = data.maximum == '' ? -1 : data.maximum
+        data.usage_limit = data.usage_limit == '' ? -1 : data.usage_limit
+        data.item_limit = data.item_limit == '' ? -1 : data.item_limit
+        data.user_limit = data.user_limit == '' ? -1 : data.user_limit
+
         create_coupon.mutate(data)
     }
 
