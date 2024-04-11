@@ -2,7 +2,7 @@ import { Box, Button, TextField } from '@mui/material'
 import React from 'react'
 import { useFormContext } from 'react-hook-form'
 
-const ProductAddQuantity = () => {
+const ProductAddQuantity = ({single}: {single: boolean}) => {
     const methods = useFormContext()
     const {register, setValue, getValues} = methods
 
@@ -22,13 +22,17 @@ const ProductAddQuantity = () => {
         <Box>
             <TextField type='number' {...register('quantity')}/>
             <Box>
-                <Button variant='outlined' onClick={increase}>
-                    +
-                </Button>
-                <br/>
+                {!single && 
+                <>
                 <Button variant='outlined' onClick={decrease}>
                     -
                 </Button>
+                <Button variant='outlined' onClick={increase}>
+                    +
+                </Button>
+                </>
+                
+                }
             </Box>
         </Box>
     )

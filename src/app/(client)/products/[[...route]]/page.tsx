@@ -15,33 +15,17 @@ const AttributePage = async ({params}: {
 }) => {
     const queryClient = new QueryClient()
 
-    // await queryClient.prefetchQuery({
-    //     queryKey: ['admin-attributes', {query: "", field: "", order: "", limit: 10, offset: 0}],
-    //     queryFn:() => getAttributes("", "", "", 10, 0),
-    // })
-    // await queryClient.prefetchQuery({
-    //     queryKey: ['admin-categories-product'],
-    //     queryFn: getCategoriesProduct,
-    // })
-    
-    // if (params.route?.length == 2 && params.route[0].toLowerCase() == 'edit') {
-    //     await queryClient.prefetchQuery({
-    //         queryKey: ['admin-product', params.route[1]],
-    //         queryFn: () => getProductWithId(params.route[1]),
-    //     })
-    //     return (
-    //         <HydrationBoundary state={dehydrate(queryClient)}>
-    //             <ProductEdit productID={params.route[1]}/>
-    //         </HydrationBoundary>
-    //       )
-    // }else
-
 
     if (params.route == undefined) {
         // products/?search=a&limit=10&offset=0&ordering=id&shipping_class=a&sold_individually=true&stock_management=true&stock_status=a&tax_class=a&tax_status=a&unit__icontains=a
-        await queryClient.prefetchQuery({
-            queryKey: ['products', {query: "", limit: 10, offset: 0, field: "", order:""}],
-            queryFn: () => getProducts("", "", "" , 10, 0, ),
+        await queryClient.prefetchInfiniteQuery({
+            queryKey: ['products', {search: "", field: "", order:""}],
+            queryFn: ({pageParam}) => getProducts("", pageParam, "" , '', {}),
+            initialPageParam: 1,
+            getNextPageParam: (lastPage, pages) => {
+                return lastPage.next
+            },
+            pages: 1,
         })
 
         return (

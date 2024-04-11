@@ -62,30 +62,69 @@ const ProductSingle = ({slug}: {slug: string}) => {
         }
         if (found_all) return variant
     })
-
-    const single_product = data.variants.length == 0
-    const single_variant = single_product ? true : (variants.length == 1)
+    
+    const single_product = data.type == 'simple'
+    const single_variant = (data.type == 'variation') && (variants.length == 1)
     const selected_all_att = attributes.length == param_queries.length
-    const can_purchase = single_product || (single_variant && selected_all_att)
+    let can_purchase = single_product || (single_variant && selected_all_att)
     const selected_none = param_queries.length == 0
     const detected_none = (param_queries.length > 0 && variants.length == 0)
     
     const gallery = []
     let price = ""
+    let stock_status = ""
 
+    console.log(data)
     if (single_product){
+        
+        // product has no variant child
         gallery.push(data.image)
         data.gallery.map((image: any) => gallery.push(image.image))
         price = data.regular_price
+
+        if (data.stock_management){
+            if (data.quantity == 0){
+                
+                if(data.backorder == 'not_allow'){
+                    stock_status = 'Out of stock'
+                    can_purchase = false
+                }else if (data.backorder == 'notify') {
+                    stock_status = 'On backorder'
+
+                }else if (data.backorder == 'allow') {
+
+                }
+            }
+        }else{
+            if (data.stock_status == 'in_stock'){
+
+            }else if (data.stock_status == 'out_of_stock'){
+                stock_status = 'Out of stock'
+                can_purchase = false
+            }else if (data.stock_status == 'on_backorder'){
+                stock_status = 'On backorder'
+                
+            }
+        }
+
     }else{
+        // product has variants
+
         if (selected_none){
+            // no attribbute is selected
+            let max_price = 0
+            let min_price = 0
             gallery.push(data.image)
             data.gallery.map((image: any) => gallery.push(image.image))
             variants.map((variant: any) => {
                 gallery.push(variant.image)
                 variant.gallery.map((image: any) => gallery.push(image.image))
+                max_price = max_price > variant.regular_price ? max_price : variant.regular_price
+                min_price = min_price < -variant.regular_price ? min_price : variant.regular_price
             })
+            price = `Price: ${min_price} - ${max_price}`
         }else if (detected_none){
+            // selected some attributes but there is no match
             gallery.push(data.image)
             data.gallery.map((image: any) => gallery.push(image.image))
             let max_price = 0
@@ -99,14 +138,25 @@ const ProductSingle = ({slug}: {slug: string}) => {
             price = `Price: Not Available`
 
         }else{
+
+            // found matching variant(s)
+
             variants.map((variant: any) => {
                 gallery.push(variant.image)
                 variant.gallery.map((image: any) => gallery.push(image.image))
             })
 
+            // if found the only one that matches
             if (variants.length == 1){
                 price = `Price: ${variants[0].regular_price}`
+                if (variants[0].stock_status == 'out_of_stock'){
+                    stock_status = "Out of stock"
+                }else if (variants[0].stock_status == 'on_backorder'){
+                    stock_status = "On backorder"
+                }
+        
             }else{
+                // if found a list of matching variants
                 let max_price = 0
                 let min_price = 0
                 variants.map((variant: any) => {
@@ -175,11 +225,18 @@ const ProductSingle = ({slug}: {slug: string}) => {
             <Box>
                 {price}
             </Box>
+            {
+                stock_status != "" && (
+                    <Box>
+                        <Typography>{stock_status}</Typography>
+                    </Box>
+                )
+            }
 
             <FormProvider {...methods}>
             <form onSubmit={handleSubmit(handle_submit)}>
             <Box>
-                <ProductAddQuantity/>
+                <ProductAddQuantity single={data.sold_individually}/>
             </Box>
 
             <Box>

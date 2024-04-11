@@ -9,7 +9,7 @@ import { useFormContext, Controller } from 'react-hook-form'
 
 const ProductInventory = () => {
 
-    const {register, control} = useFormContext()
+    const {register, control, getValues, watch} = useFormContext()
 
     return (
         <Box>
@@ -48,29 +48,67 @@ const ProductInventory = () => {
             {/* Sold individuality */}
             {/* Limit purchases to 1 item per order */}
 
-            <Box mt={3} display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
-                <Controller
-                control={control}
-                name={'stock_status'}
-                // rules={{ required: "Recipe picture is required" }}
-                render={({ field: { value, onChange, ...field } }) => {
-                    return <MyFormControl label='Stock status'>
-                    <SimpleRadio 
-                        value={value}
-                        onChange={(event: any, data: string) => {
-                            onChange(data)
+            {
+                getValues('stock_management') ? (
+                    <>
+                    
+                    <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                        <MyFormControl label='Quantity'>
+                            <TextField type='number' fullWidth size='small' {...register('quantity')} />
+                        </MyFormControl>
+                    </Box>
+                    <Box mt={3} display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
+                        <Controller
+                        control={control}
+                        name='backorder'
+                        render={({ field: { value, onChange, ...field } }) => {
+                            return <MyFormControl label='Backorder options'>
+                                <SimpleRadio 
+                                    value={value}
+                                    onChange={(event: any, data: string) => {
+                                        onChange(data)
+                                    }}
+                                    options={[
+                                        {value: 'not_allow', label: 'Do not allow'},
+                                        {value: 'notify', label: 'Allow, but notify customer'},
+                                        {value: 'allow', label: 'Allow'},
+                                    ]}
+                                    label={null}
+                                />
+                            </MyFormControl>
                         }}
-                        options={[
-                            {value: 'in_stock', label: 'in stock'},
-                            {value: 'out_of_stock', label: 'out of stock'},
-                            {value: 'on_backorder', label: 'on backorder'},
-                        ]}
-                        label={null}
+                        />
+                    </Box>
+                    </>
+
+                ) : (
+                    <Box mt={3} display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
+                    <Controller
+                    control={control}
+                    name={'stock_status'}
+                    // rules={{ required: "Recipe picture is required" }}
+                    render={({ field: { value, onChange, ...field } }) => {
+                        return <MyFormControl label='Stock status'>
+                        <SimpleRadio 
+                            value={value}
+                            onChange={(event: any, data: string) => {
+                                onChange(data)
+                            }}
+                            options={[
+                                {value: 'in_stock', label: 'in stock'},
+                                {value: 'out_of_stock', label: 'out of stock'},
+                                {value: 'on_backorder', label: 'on backorder'},
+                            ]}
+                            label={null}
+                        />
+                    </MyFormControl>
+                    }}
                     />
-                </MyFormControl>
-                }}
-                />
-            </Box>
+                </Box>
+                )
+            }
+
+
 
 
             <Box mt={3}>
@@ -92,11 +130,13 @@ const ProductInventory = () => {
                 </Box>
             </Box>
 
+
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Initial number in stock'>
                     <TextField fullWidth size='small' {...register('stock')}/>
                 </MyFormControl>
             </Box>
+            
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Unit of measurement'>

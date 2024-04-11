@@ -2,9 +2,9 @@
 import { auth } from '@/lib/auth'
 import ClientAxios from "../ClientAxios"
 
-export async function getProducts(data, field, order, limit, offset) {
+export async function getProducts(search,page, field, order, queries) {
     // const session = await auth()
-    return await ClientAxios.get(`products/?search=${data}&ordering=${order}${field}&limit=${limit}&offset=${offset}`,{
+    return await ClientAxios.get(`products/?search=${search}&ordering=${order}${field}&page=${page}`,{
         headers: {
             // 'Authorization': `Bearer ${session?.user.access}`
         }

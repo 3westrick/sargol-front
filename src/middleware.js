@@ -21,6 +21,8 @@ export default auth(async (req) => {
   const isAdmin = req.auth?.user?.role
   
   const isAdminRoute = nextUrl.pathname.startsWith(adminPrefic);
+
+  console.log(nextUrl)
   
   if (isAdminRoute && !isAdmin){
     return Response.redirect(new URL(DEFAULT_LOGIN_PAGE, nextUrl))

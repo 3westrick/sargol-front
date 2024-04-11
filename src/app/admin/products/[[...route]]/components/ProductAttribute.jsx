@@ -21,7 +21,7 @@ const ProductAttribute = () => {
     
 
     const methods = useFormContext()
-    const {register, watch, setValue} = methods
+    const {register, watch, setValue, getValues} = methods
     
 
     const {
@@ -107,7 +107,9 @@ const ProductAttribute = () => {
                             <CustomAccorion key={selected_attribute.id} header={selected_attribute.title}>
                             <FormGroup>
                                <FormControlLabel onChange={(e) => change_check_visible(e, selected_attribute)} control={<Checkbox checked={visibleAttributes.includes(selected_attribute.id)}/>} label="Visible on the product page" />
-                               <FormControlLabel onChange={(e) => change_check_variant(e, selected_attribute)} control={<Checkbox checked={variantAttributes.includes(selected_attribute.id)}/>}label="Used for varitations" />
+                               {
+                                getValues('type') == 'variation' && <FormControlLabel onChange={(e) => change_check_variant(e, selected_attribute)} control={<Checkbox checked={variantAttributes.includes(selected_attribute.id)}/>}label="Used for varitations" />
+                               }
                             </FormGroup>
                             <Box mt={2}>
                             <CustomeCheckboxAutoComplete

@@ -33,13 +33,9 @@ export async function getCategoriesProduct() {
 }
 
 
-export async function createCategory(category:any) {
+export async function createCategory(category:FormData | any) {
     const session = await auth()
-    return await AxiosAdmin.post(`categories/create/`,{
-        title: category.title,
-        slug: category.slug,
-        parent: category.parent
-    },{
+    return await AxiosAdmin.post(`categories/create/`,category,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
@@ -52,11 +48,7 @@ export async function createCategory(category:any) {
 
 export async function updateCategory(category:any) {
     const session = await auth()
-    return await AxiosAdmin.put(`categories/edit/${category.id}/`,{
-        title: category.title,
-        slug: category.slug,
-        parent: category.parent
-    },{
+    return await AxiosAdmin.put(`categories/edit/${category.get('id')}/`,category,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }

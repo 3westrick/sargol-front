@@ -124,7 +124,7 @@ const VariantCreate = ({index }: { index: number }) => {
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Stock quantity'>
-                    <TextField fullWidth size='small' {...register(`variants.${index}.stock`)}/>
+                    <TextField fullWidth size='small' {...register(`variants.${index}.quantity`)}/>
                 </MyFormControl>
             </Box>
 

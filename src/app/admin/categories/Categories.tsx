@@ -65,6 +65,12 @@ const Categories = () => {
         {field: 'id', headerName: 'Id', width:90},
         {field: 'title', headerName: 'Title', flex: 1},
         {field: 'slug', headerName: 'Slug', flex: 1},
+        {field: 'image', headerName: 'Image', width: 150, 
+            renderCell: ({id, row, value}) => (
+                value && <Box ml={1} component={'img'} height={35} width={'auto'} 
+                src={ typeof value == 'string' ? value : URL.createObjectURL(value)}/>
+            )
+        },
         {field: 'parent', headerName: 'Parent', flex: 1,
         valueGetter: (params) => params.value? params.row.parent_cat.title : ''},
         {

@@ -25,7 +25,7 @@ type FormVariant ={
   regular_price: number,
   sale_price: number,
 
-  stock: number,
+  quantity: number,
 
   image: any,
   gallery: any[],
@@ -56,6 +56,7 @@ type FormValue = {
   image: any,
   gallery: any[],
 
+  type: string,
   
   // general
   regular_price: number,
@@ -67,8 +68,10 @@ type FormValue = {
   sku: string,
   mpn: string,
   stock_management: boolean,
+  backorder: string,
   stock_status: string,
   sold_individually: boolean,
+  quantity: number,
   stock: number,
   unit: string,
 
@@ -99,6 +102,9 @@ const ProductCreate = () => {
       description: '',
       short_description: '',
 
+      type: 'simple',
+      backorder: 'not_allow',
+
       categories: [],
       tags: [],
 
@@ -112,7 +118,7 @@ const ProductCreate = () => {
 
       sku: '',
       mpn: '',
-      stock_management: false,
+      stock_management: true,
       stock_status: 'in_stock',
       sold_individually: false,
       stock: 0,
@@ -207,17 +213,16 @@ const ProductCreate = () => {
         data[key].map((item:any) => form_data.append(key, item))
       }else if(key == 'image'){
         if(data[key]) form_data.append(key, data[key]);
-      }else if(key == 'variants'){
-
-        data.variants.map((variant: any) => {
-            form_data.append(`variants`, variant.id);
-            
-            for( let variant_key in variant ){
-              form_data.append(variant.id, variant[variant_key])
-              // console.log(variant_key, variant[variant_key])
-            }
-        })
-        // if(data[key]) form_data.append(key, data[key]);
+      }else if(key == 'quantity'){
+        if(data['stock_management']){
+          if (data[key] == ''){
+            form_data.append(key, '0');
+          }else{
+            form_data.append(key, data[key]);
+          }
+        }else{
+          form_data.append(key, '0');
+        }
       }else{
         form_data.append(key, data[key]);
       }

@@ -83,6 +83,12 @@ const Attribute = ({attributeID}: {attributeID: number}) => {
         {field: 'id', headerName: 'Id', width:90},
         {field: 'title', headerName: 'Title', flex: 1},
         {field: 'slug', headerName: 'Slug', flex: 1,},
+        {field: 'image', headerName: 'Image', width: 150, 
+            renderCell: ({id, row, value}) => (
+                value && <Box ml={1} component={'img'} height={35} width={'auto'} 
+                src={ typeof value == 'string' ? value : URL.createObjectURL(value)}/>
+            )
+        },
         {
             field: 'actions',
             type: 'actions',

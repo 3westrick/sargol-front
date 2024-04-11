@@ -8,6 +8,7 @@ import ProductGeneral from './ProductGeneral';
 import ProductShipping from './ProductShipping';
 import ProductAttribute from './ProductAttribute';
 import ProductVariant from './ProductVariant';
+import { useFormContext } from 'react-hook-form';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -46,7 +47,8 @@ function a11yProps(index: number) {
 
 export default function ProductData() {
   const [value, setValue] = React.useState(0);
-
+  const {getValues} = useFormContext()
+  const is_simple = getValues('type') == 'variation'
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -66,7 +68,7 @@ export default function ProductData() {
         <Tab label="Inventory" {...a11yProps(1)} sx={{p:3, textTransform: 'unset'}} />
         <Tab label="Shipping" {...a11yProps(2)} sx={{p:3, textTransform: 'unset'}} />
         <Tab label="Attributes" {...a11yProps(3)} sx={{p:3, textTransform: 'unset'}} />
-        <Tab label="Varitations" {...a11yProps(4)} sx={{p:3, textTransform: 'unset'}} />
+        {is_simple && <Tab label="Varitations" {...a11yProps(4)} sx={{p:3, textTransform: 'unset'}} /> }
       </Tabs>
       <TabPanel value={value} index={0}>
         <ProductGeneral/>
@@ -80,9 +82,13 @@ export default function ProductData() {
       <TabPanel value={value} index={3}>
         <ProductAttribute/>
       </TabPanel>
-      <TabPanel value={value} index={4}>
-        <ProductVariant/>
-      </TabPanel>
+      {
+        is_simple && (
+        <TabPanel value={value} index={4}>
+          <ProductVariant/>
+        </TabPanel>
+        )
+      }
     </Box>
   );
 }

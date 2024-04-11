@@ -8,11 +8,24 @@ type Category = {
     parent: number | undefined | null,
 }
 
-
-
-export async function getOrders(query:string, field:string, order:string, limit: number, offset: number) {
+export async function getAtt(page: number) {
     const session = await auth()
-    return await AxiosClient.get(`orders/?limit=${limit}&offset=${offset}&search=${query}&ordering=${order}${field}`,{
+    return await AxiosClient.get(`attributes/?page=${page}`,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        throw error
+    })
+}
+
+
+
+
+export async function getOrders(page: number) {
+    const session = await auth()
+    return await AxiosClient.get(`orders/?page=${page}`,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }

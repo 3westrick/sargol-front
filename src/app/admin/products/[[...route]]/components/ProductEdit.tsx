@@ -15,6 +15,7 @@ type FormVariant ={
   key_id: string,
 
   title: string,
+  type: string,
   // slug: string,
   sku: string,
   attributes: any[],
@@ -22,6 +23,7 @@ type FormVariant ={
   regular_price: number,
   sale_price: number,
 
+  quantity: number,
   stock: number,
 
   image: any,
@@ -43,6 +45,7 @@ type FormValue = {
   // main
   title: string,
   slug: string,
+  type: string,
   description: string,
   short_description: string,
 
@@ -66,8 +69,10 @@ type FormValue = {
   stock_management: boolean,
   stock_status: string,
   sold_individually: boolean,
+  quantity: number,
   stock: number,
   unit: string,
+  backorder: string,
 
   // shipping
   weight: string,
@@ -99,9 +104,10 @@ const ProductEdit = ({productID}: {productID: number}) => {
     defaultValues: {
         title: product.title,
         slug: product.slug,
+        type: product.type,
         description: product.description,
         short_description: product.short_description,
-  
+
         categories: product.categories,
         tags: [],
 
@@ -120,6 +126,8 @@ const ProductEdit = ({productID}: {productID: number}) => {
         sold_individually: product.sold_individually,
         stock: product.stock,
         unit: product.unit,
+        backorder: product.backorder,
+        quantity: product.quantity,
   
         weight: product.weight,
         length: product.length,
@@ -142,7 +150,7 @@ const ProductEdit = ({productID}: {productID: number}) => {
   const create_variant = useMutation({
     mutationFn: (data: any) => createVariant(data),
     onSuccess: (res, variables, context) => {
-      // console.log(res)
+      console.log(res)
     },
     onError: (error) => {
       console.log(error)
@@ -229,11 +237,21 @@ const ProductEdit = ({productID}: {productID: number}) => {
         if(data[key] && typeof data[key] != 'string') form_data.append(key, data[key]);
       }else if(key == 'variants'){
         data.variants.map((item:any) => !isNaN(item.key_id) && form_data.append('variants', item.key_id))
+
+      }else if(key == 'quantity'){
+        if(data['stock_management']){
+          if (data[key] == ''){
+            form_data.append(key, '0');
+          }else{
+            form_data.append(key, data[key]);
+          }
+        }else{
+          form_data.append(key, '0');
+        }
       }else{
         form_data.append(key, data[key]);
       }
     }
-    // console.log(...form_data)
     edit_product.mutate(form_data)
     
   }

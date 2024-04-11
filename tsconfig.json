@@ -50,7 +50,7 @@
     "src/app/admin/products/create/ProductAttribute.jsx",
     "src/api/admin/products/productAPI.jsx",
     "src/app/admin/products/[[...route]]/components/ProductEdit.tsx"
-  ],
+, "src/app/(client)/orders/Orders.jsx", "src/app/(client)/categories/[[...route]]/Categories.jsx", "src/app/(client)/categories/[[...route]]/Category.jsx", "src/app/(client)/products/[[...route]]/Products.jsx", "src/app/(client)/products/[[...route]]/Products.jsx"  ],
   "exclude": [
     "node_modules"
   ]

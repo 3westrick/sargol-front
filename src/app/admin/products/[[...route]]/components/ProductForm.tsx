@@ -1,4 +1,4 @@
-import { Box, Grid, Paper, TextField, Typography } from '@mui/material';
+import { Box, Divider, FormControl, Grid, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
 import React from 'react'
 import ProductTitle from './ProductTitle';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -47,6 +47,28 @@ const ProductForm = () => {
 
               <Box mt={3}>
                 <Paper elevation={4}>
+                  <Box p={2}>
+                  <Controller
+                    control={control}
+                    name={'type'}
+                    render={({ field: { value, onChange, ...field } }) => {
+
+                      return (
+                        <FormControl sx={{width:300}} size='small'>
+                          <InputLabel id="product-data">Type</InputLabel>
+                          <Select value={value} onChange={(e) => onChange(e.target.value)} labelId='product-data' label='Type'>
+                            <MenuItem value={'simple'}>Simple</MenuItem>
+                            <MenuItem value={'variation'}>Variation</MenuItem>
+                          </Select>
+                        </FormControl>
+                      )
+
+                      }
+                    }
+                  />
+
+                  </Box>
+                  <Divider/>
                   <Box>
                     <ProductData/>
                   </Box>
