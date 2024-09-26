@@ -128,11 +128,6 @@ const ProductAttribute = () => {
                     })}
                 </Box>
             </Box>
-            {/* <Box mt={3}>
-            <CustomeCheckboxAutoComplete
-
-            />
-            </Box> */}
         </Box>
     )
 }

@@ -1,83 +1,116 @@
 "use client"
 import { getProducts } from '@/api/client/products/productAPI'
-import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
-import React, { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
+import React, { useEffect, useRef, useState } from 'react'
 import Product from './Product'
-import { Box, CircularProgress, Grid, TextField } from '@mui/material'
-import { InView } from 'react-intersection-observer';
-import { getAttributes } from '@/api/client/attributes/attributeAPI'
+import { Box, Grid, Pagination, Stack, TextField, Typography } from '@mui/material'
 import { debounce} from '@mui/material/utils'
-import CustomSkelton from '@/components/CustomSkelton'
+import { getWidget } from '@/api/client/widgets/widgetAPI'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
+import { get_page, url_query } from '@/utils/urls'
+import ProductFilterCategory from './components/ProductFilterCategory'
+import ProductFilterAttribute from './components/ProductFilterAttribute'
+import ProductFilterPrice from './components/ProductFilterPrice'
+import ProductFilterRating from './components/ProductFilterRating'
+import { client_products_query } from '@/Atoms' 
+import { useAtom } from 'jotai'
 
 const Products = () => {
-  const [search, setSearch] = useState("")
-  const [field, setField] = useState("")
-  const [order, setOrder] = useState("")
-  const [filter, setFilter] = useState([])
+  const [queries, setQueries] = useAtom(client_products_query)
 
+  const myRef = useRef(null);
+  
+  const [first, set_first] = useState(true)
 
-    const {
-      data, // {lastPage, pages}
-      fetchNextPage,
-      fetchPreviousPage,
-      hasNextPage,
-      hasPreviousPage,
-      isFetchingNextPage,
-      isFetchingPreviousPage,
-      error,
-      isFetching,
-      isLoading,
-      isFetched,
-      status,
-  } = useInfiniteQuery({
-      queryKey: ['products', {search , field, order}],
-      queryFn: ({pageParam}) => getProducts(search, pageParam, field, order, {} ),
-      initialPageParam: 1,
-      getNextPageParam: (lastPage, pages) => lastPage.next,
-      getPreviousPageParam: (previousPage, pages)=> previousPage.previous,
-  })
+  const pathname = usePathname();
+  const router = useRouter()
+  const searchParams = useSearchParams()    
+
+  const search = searchParams.get('search') ?? '';
+
+  const page = get_page(searchParams)
+
+  const handleChange = (event, value ) => {
+    url_query(value, 'page',pathname, router, searchParams)
+  };
 
   
+  const {
+      data, 
+      isLoading,
+  } = useQuery({
+      queryKey: ['products', {search , queries}, page],
+      queryFn: () => getProducts(search, page, queries),
+      keepPreviousData : true
+  })
+
+
+
+  const {data: widgetGroup} = useQuery({
+    queryKey: ['widgets', 'shop_page_widget_area'],
+    queryFn: () => getWidget('shop_page_widget_area'),
+  })
+
+  const prices = data ? data.results.map((product, index) => product.regular_price)[0] : [500]
+  const max_price = Math.max(...prices)
+
+  useEffect(() => {
+    if (first){
+      set_first(false)
+    }else{
+      if (!isLoading){
+        myRef.current?.scrollIntoView()      
+      }
+    }
+  },[isLoading, page])
+
   return (
     <Box>
       <Box>
-        <TextField onChange={debounce(e => {
-                setSearch(e.target.value)
-            },500)}
+        <TextField defaultValue={search} onChange={debounce(e => {
+          url_query(e.target.value, 'search',pathname, router, searchParams);
+          url_query('', 'page',pathname, router, searchParams);
+        },500)}
         />
       </Box>
-        {
-          !isLoading && <>
-          <Box>
-            <Grid container>
-                  {
-                    data.pages.map((page) => page.results.map((product) => {
-                      return <Grid item key={product.id} xs={4}>
-                        <Product product={product} />
-                      </Grid>
-                    }))
-                  }
-            </Grid>
-          </Box>
 
-            {isFetchingNextPage && (
-                <Box sx={{ display: 'flex' }}>
-                    <CircularProgress />
-                </Box>
-            )}
-
-            <InView onChange={(inView, entry) => {
-              if (inView && status == 'success' && !isFetching  && hasNextPage){
-                fetchNextPage()
-              }
-            } }/>
-              
-            </>
-        }
       <Box>
-        
+        {widgetGroup.widgets.map((widget) => {
+          if(widget.type == 'category') return <ProductFilterCategory key={widget.id} widget={widget}/>
+          if(widget.type == 'attribute') return <ProductFilterAttribute key={widget.id} widget={widget}/>
+          if(widget.type == 'price') return <ProductFilterPrice key={widget.id} widget={widget} max_price={max_price}/>
+          if(widget.type == 'rating') return <ProductFilterRating key={widget.id} widget={widget}/>
+        })}
       </Box>
-      
+
+      <div ref={myRef} id='my-section'>
+      {
+        !(isLoading) && <>
+            <Box >
+              <Grid container>
+                    {
+                      data.results.map((product, index) => {
+                        return <Grid item key={`${product.id}-${index}`} xs={4}>
+                          <Product product={product} />
+                        </Grid>
+                      })
+                    }
+              </Grid>
+            </Box>
+            <Box>
+              <Stack spacing={2}>
+                <Typography>Page: {page}</Typography>
+                <Pagination 
+                count={Math.ceil(data.count / 6)} 
+                page={page} 
+                onChange={handleChange}
+                />
+              </Stack>
+            </Box>
+          </>
+      }
+      </div>
+
     </Box>
   )
 }

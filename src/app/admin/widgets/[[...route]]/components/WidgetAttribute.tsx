@@ -1,5 +1,5 @@
 import MyAccordion from '@/components/admin/MyAccordion'
-import { AccordionDetails, AccordionSummary, Box, Button, FormControl, FormLabel, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
+import { AccordionDetails, AccordionSummary, Box, Button, FormControl, FormLabel, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import React from 'react'
 import { Controller, useForm, useFormContext } from 'react-hook-form';
@@ -8,7 +8,9 @@ import { getAttributes } from '@/api/admin/attributes/attributeAPI';
 import WidgetSelectAttribute from './WidgetSelectAttribute';
 import { updateWidget } from '@/api/admin/widgets/widgetAPI';
 
-const WidgetAttribute = ({widget}: {widget: any}) => {
+import WorkspacesIcon from '@mui/icons-material/Workspaces';
+
+const WidgetAttribute = ({widgets}: {widgets: any}) => {
     
     const methods = useForm({
         defaultValues: {
@@ -38,55 +40,55 @@ const WidgetAttribute = ({widget}: {widget: any}) => {
 
     return (
         <MyAccordion>
-            <AccordionSummary expandIcon={<ExpandMoreIcon />} >
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} sx={{p:1}}>
                 <Typography>Filter product by attribute</Typography>
             </AccordionSummary>
             <AccordionDetails>
                 <Box>
-                        <form onSubmit={handleSubmit(handle_submit)}>
-                    <Box display={'flex'} gap={3}>
-                        <Box>
-                            <TextField {...register('title')} size='small' variant='standard' label={'Title'}/>
-                        </Box>
-                        <Box>
-                            <WidgetSelectAttribute control={control}/>
-                        </Box>
-                        <Box>
-                            <FormControl sx={{width:300}} variant='standard' size="small">
-                            <InputLabel id="demo-simple-select-label">Display</InputLabel>
-                                <Controller
-                                    control={control}
-                                    name={'display'}
-                                    // rules={{ required: "Recipe picture is required" }}
-                                    render={({ field: { value, onChange, ...field } }) => {
-                                    return (
-                                        <Select
-                                        labelId="demo-simple-select-label"
-                                        id="demo-simple-select"
-                                        label={'Display'}
-                                        value={value}
-                                        onChange={(event)=> onChange(event.target.value)}
-                                        >
-                                        {[
-                                            {value: 'list', label: 'List'},
-                                            {value: 'dropdown', label: 'Dropdown'},
-                                        ].map((opt, index) => (
-                                            <MenuItem key={index} value={opt.value}>{opt.label}</MenuItem>
-                                        ))}
-                                        </Select>
-                                         )
+                    <form onSubmit={handleSubmit(handle_submit)}>
+                        <Box display={'flex'} gap={3}>
+                            <Box>
+                                <TextField {...register('title')} size='small' variant='standard' label={'Title'}/>
+                            </Box>
+                            <Box>
+                                <WidgetSelectAttribute control={control}/>
+                            </Box>
+                            <Box>
+                                <FormControl sx={{width:300}} variant='standard' size="small">
+                                <InputLabel id="demo-simple-select-label">Display</InputLabel>
+                                    <Controller
+                                        control={control}
+                                        name={'display'}
+                                        // rules={{ required: "Recipe picture is required" }}
+                                        render={({ field: { value, onChange, ...field } }) => {
+                                        return (
+                                            <Select
+                                            labelId="demo-simple-select-label"
+                                            id="demo-simple-select"
+                                            label={'Display'}
+                                            value={value}
+                                            onChange={(event)=> onChange(event.target.value)}
+                                            >
+                                            {[
+                                                {value: 'list', label: 'List'},
+                                                {value: 'dropdown', label: 'Dropdown'},
+                                            ].map((opt, index) => (
+                                                <MenuItem key={index} value={opt.value}>{opt.label}</MenuItem>
+                                            ))}
+                                            </Select>
+                                            )
+                                        }
                                     }
-                                }
-                                /> 
-                            </FormControl>
+                                    /> 
+                                </FormControl>
+                            </Box>
                         </Box>
-                        <Box>
-                            <Button type='submit' variant='contained' sx={{textTransform: 'unset'}}>
-                                Submit
-                            </Button>
-                        </Box>
-                    </Box>
-                        </form>
+                            <Box mt={3}>
+                                <Button type='submit' variant='contained' sx={{textTransform: 'unset'}}>
+                                    Submit
+                                </Button>
+                            </Box>
+                    </form>
                     
                 </Box>
             </AccordionDetails>

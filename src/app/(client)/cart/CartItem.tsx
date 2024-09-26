@@ -12,22 +12,63 @@ type FormValue = {
     product: number
 }
 
-const CartItem = ({item, verify_coupons}: {item: any, verify_coupons: any}) => {
+const CartItem = ({item, verify_coupons, set_items}: {item: any, verify_coupons: any, set_items:any}) => {
 
     const queryClient = useQueryClient()
-
+    
     const update_item = useMutation({
         mutationFn:(data: FormValue) => updateItem(data),
         onSuccess: (res, val) => {
-            queryClient.invalidateQueries({queryKey: ['items']})
+            if(res){
+                queryClient.invalidateQueries({queryKey: ['items']})
+                
+            }else{
+                
+                let basket_p = localStorage.getItem('basket')
+                if (basket_p){
+                    let basket = JSON.parse(basket_p)
+                    
+                    basket = basket.map((item:any)=> {
+                        if (item.product == val.product){
+                            return {
+                                ...item,
+                                quantity: parseInt(val.quantity)
+                            }
+                        }else{
+                            return {...item}
+                        }
+                    })
+                    
+                    set_items((prev:any) => prev.map((item: any) => {
+                        if (item.id == val.id){
+                            return {
+                                ...item,
+                                quantity: val.quantity
+                            }
+                        }
+                        return item
+                    }))
+                    
+                    localStorage.setItem('basket', JSON.stringify(basket))
+                    
+                    
+                }else{
+                    console.log('object')
+                }
+            }
             verify_coupons()
         }
     })
 
     const delete_item = useMutation({
-        mutationFn:() => deleteItem(item.id),
-        onSuccess: (res) => {
-            queryClient.invalidateQueries({queryKey: ['items']})
+        mutationFn:(data:any) => deleteItem(data),
+        onSuccess: (res, val) => {
+            if (res === ''){
+                queryClient.invalidateQueries({queryKey: ['items']})
+            }else{
+                set_items((prev:any) => prev.filter((item: any) => item.id != val))
+            }
+            
         }
     })
 
@@ -51,7 +92,7 @@ const CartItem = ({item, verify_coupons}: {item: any, verify_coupons: any}) => {
                 product: getValues('product'),
             })
         }else{
-            delete_item.mutate()
+            delete_item.mutate(item.id)
         }
     }, 400)
 

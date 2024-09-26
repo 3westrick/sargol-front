@@ -40,7 +40,7 @@ const ProductVariant = () => {
       regular_price: 0,
       sale_price: 0,
   
-      stock: 0,
+      quantity: 0,
   
       weight: '',
       length: '',

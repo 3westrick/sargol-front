@@ -23,7 +23,8 @@ export async function getUser(userId: number) {
         }
     }).then(response => response.data)
     .catch(error => {
-        throw new Error("")
+        console.log(error)
+        throw error
     })
 }
 

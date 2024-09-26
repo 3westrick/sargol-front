@@ -8,6 +8,8 @@ import ProductEdit from './components/ProductEdit'
 import ProductCreate from './components/ProductCreate'
 import { auth } from '@/lib/auth'
 import Products from './Products'
+import { getAllShippings, getShippings } from '@/api/admin/shippingApi'
+import { getAllTaxes, getTaxes } from '@/api/admin/taxApi'
 
 const AttributePage = async ({params}: {
     params:{
@@ -19,6 +21,14 @@ const AttributePage = async ({params}: {
     await queryClient.prefetchQuery({
         queryKey: ['admin-attributes', {query: "", field: "", order: "", limit: 10, offset: 0}],
         queryFn:() => getAttributes("", "", "", 10, 0),
+    })
+    await queryClient.prefetchQuery({
+        queryKey: ['admin-shippings'],
+        queryFn:() => getAllShippings(),
+    })
+    await queryClient.prefetchQuery({
+        queryKey: ['admin-taxes'],
+        queryFn:() => getAllTaxes(),
     })
     await queryClient.prefetchQuery({
         queryKey: ['admin-categories-product'],
@@ -50,7 +60,7 @@ const AttributePage = async ({params}: {
         await queryClient.prefetchQuery({
             // queryKey: ['admin-products', {query: "", limit: 10, offset: 0, field: "", order:"", shipping_class: '', sold_individually: 'unknown', stock_management: 'unknown', stock_status: '', tax_class: '', tax_status: '', unit__icontains: ''}],
             queryKey: ['admin-products', {query: "", limit: 10, offset: 0, field: "", order:""}],
-            queryFn: () => getProducts("", "", "" , 10, 0, ),
+            queryFn: () => getProducts("", "", "" , 10, 0),
         })
 
         return (

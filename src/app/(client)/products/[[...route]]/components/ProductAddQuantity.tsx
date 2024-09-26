@@ -1,10 +1,10 @@
 import { Box, Button, TextField } from '@mui/material'
 import React from 'react'
-import { useFormContext } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 
 const ProductAddQuantity = ({single}: {single: boolean}) => {
     const methods = useFormContext()
-    const {register, setValue, getValues} = methods
+    const {register, setValue, getValues, control} = methods
 
     function increase() {
         const value = parseInt(getValues('quantity'))
@@ -14,13 +14,24 @@ const ProductAddQuantity = ({single}: {single: boolean}) => {
 
     function decrease() {
         const value = parseInt(getValues('quantity'))
-        if (value > 0){
+        if (value > 1){
             setValue('quantity', value - 1)
         }   
     }
     return (
         <Box>
-            <TextField type='number' {...register('quantity')}/>
+            <Controller
+            control={control}
+            name='quantity'
+            render={({field: {value, onChange}}) => {
+                return <TextField type='number' value={value} onChange={(e) => {
+                    const data = parseInt(e.target.value)
+                    if (data > 0){
+                        onChange(data)
+                    }
+                }}/>
+            }}
+            />
             <Box>
                 {!single && 
                 <>

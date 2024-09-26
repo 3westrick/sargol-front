@@ -38,11 +38,7 @@ const CategoryFrom = () => {
 
     const {register, control, handleSubmit, watch} = methods
     const image = watch('image')
-    // const categories = useQuery({
-    //     queryKey: ['admin-categories'],
-    //     queryFn: () => getCategories("","","",10,0)
-    // })
-
+    
     const queryClient = useQueryClient()
     const categoryMutation = useMutation({
         mutationFn: (data: any) => category.id ?  updateCategory(data): createCategory(data),

@@ -9,6 +9,8 @@ import { Controller, useFormContext } from 'react-hook-form'
 import EditIcon from '@mui/icons-material/Edit';
 import UploadInput from '@/components/admin/UploadInput'
 import ImageGallery from './ImageGallery'
+import ShippingClassSelectVariant from '@/components/admin/ShippingClassSelectVariant'
+import TaxClassSelectVariant from '@/components/admin/TaxClassSelectVariant'
 
 const VariantCreate = ({index }: { index: number }) => {
     // console.log(variant)
@@ -20,10 +22,6 @@ const VariantCreate = ({index }: { index: number }) => {
 
     return (
         <Box>
-
-            <Box>
-              <TextField {...register(`variants.${index}.title`)} fullWidth size='small' label={'Title'} />
-            </Box>
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='SKU'>
@@ -149,7 +147,7 @@ const VariantCreate = ({index }: { index: number }) => {
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
                 <MyFormControl label='Shipping class'>
-                <ShippingClassSelect label={`variants.${index}.shipping_class`} />
+                <ShippingClassSelectVariant label={`variants.${index}.shipping_class`} />
                 </MyFormControl>
             </Box>
 
@@ -157,7 +155,7 @@ const VariantCreate = ({index }: { index: number }) => {
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
             <MyFormControl label='Tax class'>
-                <TaxClassSelect label={`variants.${index}.tax_class`}/>
+                <TaxClassSelectVariant label={`variants.${index}.tax_class`}/>
             </MyFormControl>
             </Box>
 

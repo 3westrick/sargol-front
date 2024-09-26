@@ -3,7 +3,7 @@ import Link from 'next/link'
 import React from 'react'
 
 const Product = ({product}: {product: any}) => {
-    console.log(product)
+    // console.log(product)
     let stock_status = ""
     if (product.stock_status == 'out_of_stock'){
         stock_status = "Out of stock"

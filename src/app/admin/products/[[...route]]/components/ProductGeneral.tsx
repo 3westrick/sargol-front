@@ -10,23 +10,29 @@ import { useFormContext } from 'react-hook-form'
 const ProductGeneral = () => {
 
     const methods = useFormContext()
-    const {register} = methods
+    const {register, getValues} = methods
+    const is_simple = getValues('type') == 'simple'
 
 
     // console.log({...register('tax_status')})
 
     return (
         <Box>
-            <Box display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                <MyFormControl label='Regular Price'>
-                    <TextField {...register('regular_price')} fullWidth type='number' size='small' />
-                </MyFormControl>
-            </Box>
-            <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
-                <MyFormControl label='Sale Price'>
-                    <TextField {...register('sale_price')} fullWidth type='number' size='small' />
-                </MyFormControl>
-            </Box>
+
+            {
+                is_simple && (<>
+                            <Box display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                                <MyFormControl label='Regular Price'>
+                                    <TextField {...register('regular_price')} fullWidth size='small' />
+                                </MyFormControl>
+                            </Box>
+                            <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>
+                                <MyFormControl label='Sale Price'>
+                                    <TextField {...register('sale_price')} fullWidth size='small' />
+                                </MyFormControl>
+                            </Box>
+                </>)
+            }
 
 
             <Box mt={3} display={'flex'} flexDirection={'row'} alignItems={'center'} justifyContent={'space-between'}>

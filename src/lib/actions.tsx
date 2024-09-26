@@ -8,16 +8,15 @@ import { redirect } from 'next/navigation';
 
 
 export async function authenticate({email, password}: {email: string, password: string}) {
-    console.log(email)
+
     try{
         await signIn('credentials',{
             email: email,
             password: password,
-            redirectTo: DEFAULT_LOGGED_IN_REDIRECT
         })
     }catch (error){
         if (error instanceof AuthError){
-            console.log(1234,error.cause)
+            
             switch(error.type){
                 case "CredentialsSignin": return {error: "Invalid Credentials"}
                 default: return {error: "Email or Password is wrong!"}

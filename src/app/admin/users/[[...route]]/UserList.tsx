@@ -116,7 +116,8 @@ const UserList = () => {
       }
 
       const columns: GridColDef[] = [
-        // { field: 'id', headerName: 'Id', width: 150 },
+        { field: 'id', headerName: 'Id', width: 150 },
+        { field: 'name', headerName: 'Name', width: 150 },
         { field: 'username', headerName: 'Username', width: 150 },
         { field: 'email', headerName: 'Email', width: 250 },
         { field: 'is_staff', headerName: 'Is staff', width: 150, type: 'boolean' },
@@ -131,6 +132,7 @@ const UserList = () => {
     React.useEffect(() => {
         setRowCountState(data?.count || 0)
     }, [data?.count]);
+
 
     return (
         <>

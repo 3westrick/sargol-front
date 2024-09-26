@@ -88,11 +88,12 @@ const CouponCreate = () => {
         data.categories = data.categories.map(item => item.id)
         data.exclude_categories = data.exclude_categories.map(item => item.id)
 
-        data.minimum = data.minimum == '' ? -1 : data.minimum
-        data.maximum = data.maximum == '' ? -1 : data.maximum
-        data.usage_limit = data.usage_limit == '' ? -1 : data.usage_limit
-        data.item_limit = data.item_limit == '' ? -1 : data.item_limit
-        data.user_limit = data.user_limit == '' ? -1 : data.user_limit
+        data.minimum = data.minimum == '' ? -1 : (data.minimum ?? -1)
+        data.maximum = data.maximum == '' ? -1 : (data.maximum ?? -1)
+        data.usage_limit = data.usage_limit == '' ? -1 : (data.usage_limit ?? -1)
+        data.item_limit = data.item_limit == '' ? -1 : (data.item_limit ?? -1)
+        data.user_limit = data.user_limit == '' ? -1 : (data.user_limit ?? -1)
+
 
         create_coupon.mutate(data)
     }

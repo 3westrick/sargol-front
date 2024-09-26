@@ -21,10 +21,21 @@ export async function getWidgets() {
     })
 }
 
-
-export async function updateWidget(widetId: string, data: any) {
+export async function createWidget( data: any) {
     const session = await auth()
-    return await AxiosAdmin.put(`widgets/edit/${widetId}/`,data,{
+    return await AxiosAdmin.post(`widgets/create/`,data,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        throw error
+    })
+}
+
+export async function updateWidget(widget: any) {
+    const session = await auth()
+    return await AxiosAdmin.put(`widgets/edit/${widget.id}/`,widget,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }

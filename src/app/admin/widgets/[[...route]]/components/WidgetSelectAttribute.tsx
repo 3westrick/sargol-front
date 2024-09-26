@@ -2,64 +2,48 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import {debounce} from '@mui/material/utils';
-import { useMutation } from '@tanstack/react-query';
-import { getAttributes } from '@/api/admin/attributes/attributeAPI';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { getAllAttributes, getAttributes } from '@/api/admin/attributes/attributeAPI';
 import { Controller } from 'react-hook-form';
+import { FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 
 
 export default function WidgetSelectAttribute({control}: {control: any}) {
-    const [query, setQuery] = React.useState("")
-    const [list, setList] = React.useState<any[]>([])
-    const get_attributes = useMutation({
-      mutationFn: (data: any) => getAttributes(data, "", "", 10, 0),
-      onSuccess: (res)=> {
-        setList(res.results)
-      }
+
+    const attributes_query = useQuery({
+      queryKey: ['admin-attributes', 'all'],
+      queryFn: () => getAllAttributes()
     })
 
-    React.useEffect(()=>{
-      get_attributes.mutate(query)
-    }, [query])
 
   return ( 
-    <Controller
-    control={control}
-    name='attribute'
-    render={({ field: { value, onChange, ...field } }) => {
+    <FormControl variant='standard' size="small">
+      <InputLabel id="demo-simple-select-label">Attribute</InputLabel>
+        <Controller
+        control={control}
+        name={'attribute'}
+        // rules={{ required: "Recipe picture is required" }}
+        render={({ field: { value, onChange, ...field } }) => {
         return (
-            <Autocomplete size='small'
-                onChange={(event, data)=>{
-                    if(data == null)setQuery('')
-                    onChange(data)
-                }}
-                value={value}
-                options={list}
-                loading={get_attributes.isPending}
-                disableCloseOnSelect
-                isOptionEqualToValue={(option, value)=>{
-                    return option.id == value.id
-                }}
-                getOptionLabel={(option) => option.title}
-                fullWidth
-                sx={{width: 300}}
-                renderInput={(params) => (
-                    <TextField
-                    label={'attribute'}
-                    variant='standard'
-                    {...params} 
-                    onChange={debounce(e => {
-                        setQuery(e.target.value)
-                    }, 500)} 
-                    onBlur={debounce(e => {
-                        setQuery(e.target.value)
-                    }, 500)}
-                    />
-                )}
-                />
-             )
+            <Select
+            sx={{width:'195px'}}
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            label={'Attribute'}
+            value={value}
+            onChange={(event)=> onChange(event.target.value)}
+            >
+                {
+                attributes_query.data.map((att:any, index: number) => (
+                    <MenuItem key={att.id} value={att.id}>{att.title}</MenuItem>
+                ))
+                }
+                </Select>
+                )
+            }
         }
-    }
-  />
+      /> 
+    </FormControl>
   );
 }
 

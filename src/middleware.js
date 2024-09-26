@@ -22,7 +22,7 @@ export default auth(async (req) => {
   
   const isAdminRoute = nextUrl.pathname.startsWith(adminPrefic);
 
-  console.log(nextUrl)
+  // console.log(nextUrl)
   
   if (isAdminRoute && !isAdmin){
     return Response.redirect(new URL(DEFAULT_LOGIN_PAGE, nextUrl))
@@ -30,7 +30,15 @@ export default auth(async (req) => {
 
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
+
+  let isPublicRoute = false;
+  
+  publicRoutes.map(publicRoute => {
+    if (nextUrl.pathname.startsWith(publicRoute)){
+      isPublicRoute = true;
+    }
+  })
+  
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) return null;

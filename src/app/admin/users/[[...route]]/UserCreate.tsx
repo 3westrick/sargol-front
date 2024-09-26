@@ -7,6 +7,15 @@ import { FormProvider, useForm } from 'react-hook-form'
 import UserForm from './UserForm'
 
 type FormValue = {
+    first_name: string,
+    last_name: string,
+    
+    country: string,
+    city: string,
+    address: string,
+    post_code: string,
+
+    phone: string,
     username : string,
     password : string,
     email : string,
@@ -18,6 +27,15 @@ type FormValue = {
 const UserCreate = () => {
     const methods = useForm<FormValue>({
         defaultValues: {
+            first_name : '',
+            last_name : '',
+
+            country: '',
+            city:'',
+            address: '',
+            post_code: '',
+
+            phone: '',
             username : '',
             password : '',
             email : '',

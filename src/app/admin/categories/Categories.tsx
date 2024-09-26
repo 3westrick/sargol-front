@@ -13,13 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import CategoryDrawer from "./CategoryDrawer"
 import { debounce } from "@mui/material/utils"
 
-type CategoryProp = {
-    id: number 
-    title: string 
-    slug: string 
-    parent: number | undefined | null,
-    parent_cat: any
-}
+
 
 const Categories = () => {
     
@@ -33,7 +27,7 @@ const Categories = () => {
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 10,
-      });
+    });
 
     const [rowCountState, setRowCountState] = useState(0);
     const categories_query = useQuery({
@@ -103,12 +97,13 @@ const Categories = () => {
             <Typography variant="h4">
                 Categories
             </Typography>
-            <Button onClick={() => {setAtomCategory({
-                title: '',
-                slug: '',
-                parent: null,
-            });
-            setOpen(true)
+            <Button onClick={() => {
+                setAtomCategory({
+                    title: '',
+                    slug: '',
+                    parent: null,
+                });
+                setOpen(true)
             }} startIcon={<EditIcon/>} variant='contained' sx={{textTransform: 'none', bgcolor: 'common.black', borderRadius: 8, '&:hover':{ bgcolor: 'grey.900'} }}>
                 Create
             </Button>

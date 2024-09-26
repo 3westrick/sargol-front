@@ -1,7 +1,10 @@
 
 export const publicRoutes = [
     "/",
-    "/edit"
+    "/edit",
+    "/products",
+    "/cart",
+    ""
 ];
 
 export const authRoutes = [

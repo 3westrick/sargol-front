@@ -13,6 +13,31 @@ const UserForm = () => {
             </Box>
 
             <Box mt={3}>
+                <TextField fullWidth {...register('first_name')} label={'First name'}/>
+            </Box>
+
+            <Box mt={3}>
+                <TextField fullWidth {...register('last_name')} label={'Last name'}/>
+            </Box>
+
+            <Box mt={3}>
+                <TextField fullWidth {...register('phone')} label={'Phone'}/>
+            </Box>
+
+            <Box mt={3}>
+                <TextField fullWidth {...register('country')} label={'Country'}/>
+            </Box>
+            <Box mt={3}>
+                <TextField fullWidth {...register('city')} label={'City'}/>
+            </Box>
+            <Box mt={3}>
+                <TextField fullWidth {...register('address')} label={'Address'}/>
+            </Box>
+            <Box mt={3}>
+                <TextField fullWidth {...register('post_code')} label={'Post code'}/>
+            </Box>
+
+            <Box mt={3}>
                 <TextField type='password' fullWidth {...register('password')} label={'Password'}/>
             </Box>
 

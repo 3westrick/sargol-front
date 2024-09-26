@@ -15,8 +15,8 @@ const CouponPage = async ({params}: {
 
   if (!params.route){
     await queryClient.prefetchQuery({
-      queryKey: ['admin-orders', {query: "", field: "", order: "", limit: 10, offset: 0}],
-      queryFn:() => getOrders("", "", "", 10, 0),
+      queryKey: ['admin-orders', {query: "", field: "", order: "", limit: 10, offset: 0, status: ''}],
+      queryFn:() => getOrders("", "", "", 10, 0, ''),
     })
     return <HydrationBoundary state={dehydrate(queryClient)}>
               <Orders/>

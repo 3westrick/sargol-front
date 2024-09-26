@@ -2,11 +2,24 @@
 import { getOrders } from '@/api/admin/orders/orderAPI'
 import { Box, Button, TextField } from '@mui/material'
 import { debounce } from '@mui/material/utils'
-import { DataGrid, GridCallbackDetails, GridColDef, GridSortModel } from '@mui/x-data-grid'
+import { DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel, GridSortModel, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid'
 import { useQuery } from '@tanstack/react-query'
-import { useRouter } from 'next/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { styled } from '@mui/material/styles';
 import React from 'react'
+import dayjs from 'dayjs'
+import { useAtom } from 'jotai'
+import { admin_orders_selected_rows, admin_orders_status } from '@/Atoms'
+import OrdersBulkActions from './OrdersBulkActions'
+import OrdersStatusButton from './OrdersStatusButton'
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer>
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  );
+}
 
 
 const StyledGridOverlay = styled('div')(({ theme }) => ({
@@ -88,6 +101,13 @@ const Orders = () => {
     const [query, setQuery] = React.useState("")
     const [field, setField] = React.useState("")
     const [order, setOrder] = React.useState("")
+    // const [status, setStatus] = useAtom(admin_orders_status)
+
+    const searchParams = useSearchParams()    
+  
+    const status = searchParams.get('status') ?? '';
+
+    const [rowSelectionModel, setRowSelectionModel] = useAtom(admin_orders_selected_rows)
 
     const [paginationModel, setPaginationModel] = React.useState({
         page: 0,
@@ -96,10 +116,11 @@ const Orders = () => {
     const [rowCountState, setRowCountState] = React.useState(0);
     
     const orders_query = useQuery({
-        queryKey: ['admin-orders', {query, field, order, limit: paginationModel.pageSize, offset: paginationModel.page * paginationModel.pageSize}],
-        queryFn: () => getOrders(query, field, order, paginationModel.pageSize, paginationModel.page * paginationModel.pageSize),
+        queryKey: ['admin-orders', {query, field, order, limit: paginationModel.pageSize, offset: paginationModel.page * paginationModel.pageSize, status}],
+        queryFn: () => getOrders(query, field, order, paginationModel.pageSize, paginationModel.page * paginationModel.pageSize, status),
     })
     const {data, isLoading, isFetched} =  orders_query
+
 
     function handleSortModelChange(model: GridSortModel, details: GridCallbackDetails<any>){
         if(model[0]){
@@ -116,13 +137,24 @@ const Orders = () => {
         }
     }
     const columns: GridColDef[] = [
-        { field: 'id', headerName: 'Id', width: 150 },
-        { field: 'user', headerName: 'User', width: 150 },
+        { field: 'order', headerName: 'Order', width: 250, 
+        valueGetter:({id, row, value}) => {
+          return `#${id} ${row.name}`
+        }, 
+        },
+        { field: 'created_at', headerName: 'Date', width: 150, 
+        valueGetter:({id, row, value}) => {
+          return dayjs(value).format('DD MMM YYYY')
+        }, 
+        },
         { field: 'status', headerName: 'Status', width: 250 ,},
-        { field: 'price', headerName: 'Price', width: 150 },
+        { field: 'price', headerName: 'Total', width: 150 ,        
+        valueGetter:({id, row, value}) => {
+          return `£${value}`
+        },},
         {
           field: 'actions',headerName: '', sortable:false, width: 150, renderCell: ({id, row, value}) => {
-            return <Button onClick={() => router.push(`/admin/orders/${id}`)}>Edit</Button>
+            return <Button sx={{textTransform: 'unset'}} onClick={() => router.push(`/admin/orders/${id}`)}>Show</Button>
           },
           disableColumnMenu: true
         }
@@ -140,6 +172,13 @@ const Orders = () => {
                 setQuery(e.target.value)
             },500)} />
 
+            <Box mt={3}>
+              <OrdersStatusButton/>
+            </Box>
+
+            <Box mt={3}>
+              <OrdersBulkActions/>
+            </Box>
 
             <DataGrid 
             rows={isFetched ? data.results : []} 
@@ -147,10 +186,9 @@ const Orders = () => {
             columns={columns}
             sx={{ '--DataGrid-overlayHeight': '300px', mt: 2 }}
 
-
-
             slots={{ 
                 // toolbar: GridToolbar,
+                toolbar: CustomToolbar,
                 noRowsOverlay: CustomNoRowsOverlay,
                 // columnMenu: CustomColumnMenu
             }}
@@ -166,6 +204,13 @@ const Orders = () => {
             paginationModel={paginationModel}
             paginationMode="server"
             onPaginationModelChange={setPaginationModel}
+
+            checkboxSelection
+            onRowSelectionModelChange={(newRowSelectionModel) => {
+              setRowSelectionModel(newRowSelectionModel);
+            }}
+            rowSelectionModel={rowSelectionModel}
+            disableRowSelectionOnClick
 
             />
             </Box>

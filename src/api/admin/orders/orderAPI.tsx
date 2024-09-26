@@ -8,9 +8,9 @@ type Category = {
     parent: number | undefined | null,
 }
 
-export async function getOrders(query:string, field:string, order:string, limit: number, offset: number) {
+export async function getOrders(query:string, field:string, order:string, limit: number, offset: number, status: string) {
     const session = await auth()
-    return await AxiosAdmin.get(`orders/?limit=${limit}&offset=${offset}&search=${query}&ordering=${order}${field}`,{
+    return await AxiosAdmin.get(`orders/?limit=${limit}&offset=${offset}&search=${query}&ordering=${order}${field}&status=${status}`,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
@@ -37,7 +37,7 @@ export async function getOrder(orderId: number) {
 
 export async function updateOrder(order:any) {
     const session = await auth()
-    return await AxiosAdmin.put(`orders/edit/${order.id}/`,order,{
+    return await AxiosAdmin.patch(`orders/edit/${order.id}/`,order,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }

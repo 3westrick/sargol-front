@@ -10,6 +10,7 @@ import { useFormContext, Controller } from 'react-hook-form'
 const ProductInventory = () => {
 
     const {register, control, getValues, watch} = useFormContext()
+    const is_simple = getValues('type') == 'simple'
 
     return (
         <Box>
@@ -82,7 +83,7 @@ const ProductInventory = () => {
                     </>
 
                 ) : (
-                    <Box mt={3} display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
+                    is_simple && <Box mt={3} display={'flex'} flexDirection={'row'} justifyContent={'space-between'}>
                     <Controller
                     control={control}
                     name={'stock_status'}
@@ -104,7 +105,7 @@ const ProductInventory = () => {
                     </MyFormControl>
                     }}
                     />
-                </Box>
+                    </Box>
                 )
             }
 

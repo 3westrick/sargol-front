@@ -8,6 +8,15 @@ import UserForm from './UserForm'
 import { notFound } from 'next/navigation'
 
 type FormValue = {
+    first_name: string,
+    last_name: string,
+    
+    country: string,
+    city: string,
+    address: string,
+    post_code: string,
+
+    phone: string,
     username : string,
     password : string,
     email : string,
@@ -28,6 +37,15 @@ const UserEdit = ({userId}: {userId: number}) => {
 
     const methods = useForm<FormValue>({
         defaultValues: {
+            first_name : user.first_name,
+            last_name : user.last_name,
+
+            country: user.country,
+            city: user.city,
+            address: user.address,
+            post_code: user.post_code,
+
+            phone : user.phone,
             username : user.username,
             password : '',
             email : user.email,

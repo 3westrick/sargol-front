@@ -7,7 +7,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { debounce } from "@mui/material/utils"
 import { useMutation } from '@tanstack/react-query';
 import { Controller, useFormContext } from 'react-hook-form';
-import { getProducts } from '@/api/admin/products/productAPI';
+import { getProductsCoupon } from '@/api/admin/products/productAPI';
 
 const icon = <CheckBoxOutlineBlankIcon fontSize="small" />;
 const checkedIcon = <CheckBoxIcon fontSize="small" />;
@@ -18,7 +18,7 @@ export default function CouponExcludeProductSelect() {
     const [list, setList] = React.useState<any[]>([])
     const selected = watch('exclude_products')
     const get_categories = useMutation({
-      mutationFn: (data: string) => getProducts(data),
+      mutationFn: (data: string) => getProductsCoupon(data),
       onSuccess: (res)=> {
         setList(res.results)
       }

@@ -2,7 +2,7 @@ import { Box, Button, Typography } from '@mui/material'
 import Link from 'next/link'
 import React from 'react'
 
-const AccountPage = () => {
+const AccountPage =  async() => {
     return (
         <Box>
             <Typography>Account Page</Typography>

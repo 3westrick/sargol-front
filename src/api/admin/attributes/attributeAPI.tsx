@@ -27,6 +27,19 @@ export async function getAttributes(query:string, field:string, order:string, li
     })
 }
 
+
+export async function getAllAttributes() {
+    const session = await auth()
+    return await AxiosAdmin.get(`attributes/all/`,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        throw error
+    })
+}
+
 export async function getAttribute(attributeID: number) {
     const session = await auth()
     return await AxiosAdmin.get(`attributes/${attributeID}/`,{

@@ -1,8 +1,12 @@
+import { GridRowSelectionModel } from '@mui/x-data-grid'
 import {atom} from 'jotai'
 
 export const admin_drawer_attribue = atom<any>(null)
 export const admin_drawer_value = atom<any>(null)
 export const admin_drawer_category = atom<any>(null)
+export const admin_drawer_tax = atom<any>(null)
+export const admin_drawer_rate = atom<any>(null)
+export const admin_drawer_shipping = atom<any>(null)
 
 export const admin_snackbar = atom({
     state: false,
@@ -61,3 +65,12 @@ export const admin_product = atom({
     quantity: 0,
     unit: '',
 })
+
+
+export const client_products_query = atom({values:'', categories:'', price_gte:'', price_lte:'', rating_gte:''})
+export const client_coupons = atom<any>([])
+export const client_coupons_price = atom('')
+export const client_sub_total = atom('')
+
+export const admin_orders_selected_rows = atom<GridRowSelectionModel>([])
+export const admin_orders_status = atom('')

@@ -1,12 +1,7 @@
 "use server"
 import { auth } from '@/lib/auth'
 import AxiosAdmin from "../AdminAxios"
-type Category = {
-    id: number | undefined | null,
-    title: string | undefined | null,
-    slug: string | undefined | null,
-    parent: number | undefined | null,
-}
+
 
 export async function getCategories(query:string, field:string, order:string, limit: number, offset: number) {
     const session = await auth()

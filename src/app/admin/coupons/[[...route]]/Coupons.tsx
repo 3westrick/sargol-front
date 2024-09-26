@@ -129,6 +129,7 @@ const Coupons = () => {
     },
     { field: 'description', headerName: 'Description', width: 300 },
     { field: 'amount', headerName: 'Coupon amount', width: 150 },
+    { field: 'exclude_sale_items', headerName: 'Exclude sale items', width: 150, type: 'boolean' },
     {
       field: 'actions',headerName: '', sortable:false, width: 150, renderCell: ({id, row, value}) => {
         return <Button onClick={() => router.push(`/admin/coupons/edit/${id}`)}>Edit</Button>

@@ -28,3 +28,14 @@ export async function getAttributes(att_ids: string) {
         throw error
     })
 }
+
+export async function getAttribute(att_id: string) {
+    
+    return await ClientAxios.get(`attributes/${att_id}/`,{
+        headers: {
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        throw error
+    })
+}

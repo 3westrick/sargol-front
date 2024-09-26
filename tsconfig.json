@@ -50,7 +50,7 @@
     "src/app/admin/products/create/ProductAttribute.jsx",
     "src/api/admin/products/productAPI.jsx",
     "src/app/admin/products/[[...route]]/components/ProductEdit.tsx"
-, "src/app/(client)/orders/Orders.jsx", "src/app/(client)/categories/[[...route]]/Categories.jsx", "src/app/(client)/categories/[[...route]]/Category.jsx", "src/app/(client)/products/[[...route]]/Products.jsx", "src/app/(client)/products/[[...route]]/Products.jsx"  ],
+, "src/app/(client)/orders/Orders.jsx", "src/app/(client)/categories/[[...route]]/Categories.jsx", "src/app/(client)/product-category/[[...route]]/Category.jsx", "src/app/(client)/products/[[...route]]/Products.jsx", "src/app/(client)/products/[[...route]]/Products.jsx", "src/app/(client)/products/[[...route]]/components/ProductFilterPrice.jsx", "src/app/admin/shippings/[[...route]]/ShippingZones.tsx", "src/components/admin/more/CountrySelectComp.jsx", "src/components/admin/more/aa.jsx", "src/components/admin/more/StateSelectMultiple.jsx", "src/app/admin/settings/Settings.jsx", "src/app/(client)/cart/CartShipping.jsx", "src/app/(client)/checkout/utils.jsx"  ],
   "exclude": [
     "node_modules"
   ]

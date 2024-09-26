@@ -14,9 +14,7 @@ type FormVariant ={
   id: string | number,
   key_id: string,
 
-  title: string,
   type: string,
-  // slug: string,
   sku: string,
   attributes: any[],
   values: any[],
@@ -193,10 +191,33 @@ const ProductEdit = ({productID}: {productID: number}) => {
             variant.attributes.map((item:any) => form_data.append(k, item))
           }else if(k == 'values'){
             variant.values.map((item:any) => form_data.append(k, item))
+          }else if(k == 'quantity'){
+            if(res.stock_management){
+              if (variant[k] == '' || variant[k] == null){
+                form_data.append(k, res.quantity);
+              }else{
+                form_data.append(k, variant[k]);
+              }
+            }else{
+              form_data.append(variant, '0');
+            }
+          }else if(k == 'shipping_class') {
+            if (variant[k] == '0'){
+              form_data.append(k, res.shipping_class);
+            }else{
+              form_data.append(k, variant[k]);
+            }
+          }else if(k == 'tax_class') {
+            if (variant[k] == '0'){
+              form_data.append(k, res.tax_class);
+            }else{
+              form_data.append(k, variant[k]);
+            }
           }else{
             form_data.append(k, variant[k])
           }
         }
+        form_data.append('type', 'variant')
         // form_data.get('key_id')
         // console.log(!isNaN(variant.key_id))
         if(!isNaN(variant.key_id)){
@@ -240,7 +261,7 @@ const ProductEdit = ({productID}: {productID: number}) => {
 
       }else if(key == 'quantity'){
         if(data['stock_management']){
-          if (data[key] == ''){
+          if (data[key] == '' || data[key] == null){
             form_data.append(key, '0');
           }else{
             form_data.append(key, data[key]);
@@ -252,6 +273,7 @@ const ProductEdit = ({productID}: {productID: number}) => {
         form_data.append(key, data[key]);
       }
     }
+    
     edit_product.mutate(form_data)
     
   }

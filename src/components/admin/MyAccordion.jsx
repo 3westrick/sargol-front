@@ -1,8 +1,8 @@
 import { Accordion } from '@mui/material'
 import React from 'react'
 
-const MyAccordion = ({children}) => {
-    const [expand, setExpand] = React.useState(false);
+const MyAccordion = ({children, ex=false}) => {
+    const [expand, setExpand] = React.useState(ex);
 
     function handleChange(event, expanded) {
         // console.log(event.target.classList)

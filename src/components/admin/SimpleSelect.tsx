@@ -14,7 +14,7 @@ const SimpleSelect = ({options, label}:{
             control={control}
             name={label}
             // rules={{ required: "Recipe picture is required" }}
-            render={({ field: { value, onChange, ...field } }) => {
+            render={({ field: { value, onChange } }) => {
               return (
                 <Select
                   value={value}

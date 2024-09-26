@@ -2,10 +2,23 @@
 import { auth } from '@/lib/auth'
 import AxiosAdmin from "../AdminAxios"
 
-export async function getProducts(data, field, order, limit, offset) {
+export async function getProducts(data, field='', order='', limit, offset) {
     // products/?search=a&limit=10&offset=0&ordering=id&shipping_class=a&sold_individually=true&stock_management=true&stock_status=a&tax_class=a&tax_status=a&unit__icontains=a
     const session = await auth()
     return await AxiosAdmin.get(`products/?search=${data}&ordering=${order}${field}&limit=${limit}&offset=${offset}`,{
+        headers: {
+            'Authorization': `Bearer ${session?.user.access}`
+        }
+    }).then(response => response.data)
+    .catch(error => {
+        throw error
+    })
+}
+
+export async function getProductsCoupon(data, field='', order='', limit, offset) {
+    // products/?search=a&limit=10&offset=0&ordering=id&shipping_class=a&sold_individually=true&stock_management=true&stock_status=a&tax_class=a&tax_status=a&unit__icontains=a
+    const session = await auth()
+    return await AxiosAdmin.get(`products/coupon/?search=${data}&ordering=${order}${field}&limit=${limit}&offset=${offset}`,{
         headers: {
             'Authorization': `Bearer ${session?.user.access}`
         }
@@ -63,7 +76,7 @@ export async function createVariant(data) {
         }
     }).then(response => response.data)
     .catch(error => {
-        console.log(error.response)
+        console.log(error)
         throw error
     })
 }

@@ -7,6 +7,7 @@ import React from 'react'
 import { auth } from '@/lib/auth'
 import Products from './Products'
 import ProductSingle from './ProductSingle'
+import { getWidget } from '@/api/client/widgets/widgetAPI'
 
 const AttributePage = async ({params}: {
     params:{
@@ -18,14 +19,14 @@ const AttributePage = async ({params}: {
 
     if (params.route == undefined) {
         // products/?search=a&limit=10&offset=0&ordering=id&shipping_class=a&sold_individually=true&stock_management=true&stock_status=a&tax_class=a&tax_status=a&unit__icontains=a
-        await queryClient.prefetchInfiniteQuery({
-            queryKey: ['products', {search: "", field: "", order:""}],
-            queryFn: ({pageParam}) => getProducts("", pageParam, "" , '', {}),
-            initialPageParam: 1,
-            getNextPageParam: (lastPage, pages) => {
-                return lastPage.next
-            },
-            pages: 1,
+        await queryClient.prefetchQuery({
+            queryKey: ['products', {search: "", queries: {values:'', categories:'', price_gte:'', price_lte:'', rating_gte:''}}, 1],
+            queryFn: () => getProducts("", 1, {values:'', categories:'', price_gte:'', price_lte:'', rating_gte:''} ),
+        })
+
+        await queryClient.prefetchQuery({
+            queryKey: ['widgets', 'shop_page_widget_area'],
+            queryFn: () => getWidget('shop_page_widget_area')
         })
 
         return (

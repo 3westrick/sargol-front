@@ -1,5 +1,5 @@
 import { getCategories } from '@/api/admin/categories/categoryAPI'
-import { getProducts } from '@/api/admin/products/productAPI'
+import { getProducts, getProductsCoupon } from '@/api/admin/products/productAPI'
 import { HydrationBoundary, QueryClient, dehydrate } from '@tanstack/react-query'
 import { notFound } from 'next/navigation'
 import React from 'react'
@@ -19,7 +19,7 @@ const CouponPage = async ({params}: {
 
   await queryClient.prefetchQuery({
     queryKey: ['admin-products', {query: "", limit: 10, offset: 0, field: "", order:""}],
-    queryFn: () => getProducts("", "", "" , 10, 0, ),
+    queryFn: () => getProductsCoupon("", "", "" , 10, 0,),
   })
 
   await queryClient.prefetchQuery({

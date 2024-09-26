@@ -12,14 +12,9 @@ const OrdersPage = async () => {
     //     queryFn:() => getOrders("", "", "", 10, 0),
     // })
 
-    await queryClient.prefetchInfiniteQuery({
-        queryKey: ['orders'],
-        queryFn: ({pageParam}) => getOrders(pageParam),
-        initialPageParam: 1,
-        getNextPageParam: (lastPage, pages) => {
-            return lastPage.next
-        },
-        pages: 1, // prefetch the first 3 pages
+    await queryClient.prefetchQuery({
+        queryKey: ['orders', {page: 1}],
+        queryFn: () => getOrders(1),
     })
     
 

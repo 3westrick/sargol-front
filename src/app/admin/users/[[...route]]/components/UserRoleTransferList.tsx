@@ -77,7 +77,7 @@ export default function UserRoleTransferList() {
         setRight([]);
     };
 
-    const customList = (items: readonly number[]) => {
+    const CustomList = (items: readonly number[]) => {
         const [filter, setFiler] = React.useState("")
         return (
             <Paper sx={{ width: 400, height: 300, overflow: 'auto' }}>
@@ -118,7 +118,7 @@ export default function UserRoleTransferList() {
 
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="center">
-            <Grid item>{customList(left)}</Grid>
+            <Grid item>{CustomList(left)}</Grid>
             <Grid item>
                 <Grid container direction="column" alignItems="center">
                     {/* <Button
@@ -163,7 +163,7 @@ export default function UserRoleTransferList() {
                     </Button> */}
                 </Grid>
             </Grid>
-            <Grid item>{customList(right)}</Grid>
+            <Grid item>{CustomList(right)}</Grid>
         </Grid>
     );
 }

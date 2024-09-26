@@ -17,7 +17,7 @@ export async function getCategories(page: number ,search: string) {
 
 
 export async function getCategory(slug: string, page: number, search: string) {
-    const session = await auth()
+    
     return await ClientAxios.get(`categories/${slug}/?page=${page}&search=${search}`,{
         headers: {
             // 'Authorization': `Bearer ${session?.user.access}`
